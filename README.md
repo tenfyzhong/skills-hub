@@ -2,6 +2,16 @@
 
 Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 
+## Available Skills
+
+- analyse-issue
+- create-pr
+- implement-issue
+- install-nvim-plugin
+- new-issue
+- pr-review
+- resolve-git-conflicts
+
 ## Install Skills (via vercel-labs/skills)
 
 Use the Skills CLI to install this repository's skills. Examples:
