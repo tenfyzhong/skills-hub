@@ -7,7 +7,6 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 - analyse-issue
 - create-pr
 - implement-issue
-- install-nvim-plugin
 - new-issue
 - pr-review
 - resolve-git-conflicts
@@ -23,9 +22,9 @@ npx skills add tenfyzhong/skill-hub -s analyse-issue -g
 
 ## Install Local Skills
 
-Install a skill into a local project by running the command from that project's directory. Example for Neovim:
+Install a skill into a local project by running the command from that project's directory.
 
 ```bash
-cd ~/.config/nvim
-npx skills add tenfyzhong/skill-hub -s install-nvim-plugin
+cd ~/your-project
+npx skills add tenfyzhong/skill-hub -s analyse-issue
 ```

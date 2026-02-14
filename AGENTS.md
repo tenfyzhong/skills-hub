@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- Skills live in top-level directories such as `analyse-issue/`, `create-pr/`, and `install-nvim-plugin/`.
+- Skills live in top-level directories such as `analyse-issue/`, `create-pr/`, and `resolve-git-conflicts/`.
 - Each skill is defined in a single `SKILL.md` file at `<skill-name>/SKILL.md` with YAML front matter.
 - Repository docs are minimal; `README.md` is the landing page and should reference key contributor guidance.
 
@@ -20,7 +20,7 @@
 - If tests are added in the future, document the framework and naming convention here (for example, `tests/<feature>_test.*`).
 
 ## Commit & Pull Request Guidelines
-- Follow the existing commit style: `type(scope): summary` (for example, `feat(install-nvim-plugin): add comprehensive SKILL.md documentation`).
+- Follow the existing commit style: `type(scope): summary` (for example, `feat(analyse-issue): improve issue analysis instructions`).
 - All commits must be signed off: `git commit -s`.
 - PRs should include a clear summary of changes, rationale, and any impacted skills or docs.
 
