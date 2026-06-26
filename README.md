@@ -6,6 +6,7 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 
 - analyse-issue
 - create-pr
+- deploy-tidb-aws
 - implement-issue
 - new-issue
 - pr-review
@@ -16,8 +17,8 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 Use the Skills CLI to install this repository's skills. Examples:
 
 ```bash
-npx skills add tenfyzhong/skill-hub -s "*" -g
-npx skills add tenfyzhong/skill-hub -s analyse-issue -g
+npx skills add tenfyzhong/skills-hub -s "*" -g
+npx skills add tenfyzhong/skills-hub -s analyse-issue -g
 ```
 
 ## Install Local Skills
@@ -26,5 +27,5 @@ Install a skill into a local project by running the command from that project's 
 
 ```bash
 cd ~/your-project
-npx skills add tenfyzhong/skill-hub -s analyse-issue
+npx skills add tenfyzhong/skills-hub -s analyse-issue
 ```
