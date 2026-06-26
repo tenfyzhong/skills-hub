@@ -1,0 +1,52 @@
+global:
+  user: "tidb"
+  ssh_port: 22
+  deploy_dir: "/tidb-deploy"
+
+server_configs:
+  tidb: {}
+  tikv: {}
+  pd: {}
+  %{~ if length(tiflash_hosts) > 0 ~}
+  tiflash: {}
+  %{~ endif ~}
+  %{~ if length(ticdc_hosts) > 0 && cdc_newarch ~}
+  cdc:
+    newarch: true
+  %{~ endif ~}
+  %{~ if length(ticdc_hosts) > 0 && !cdc_newarch ~}
+  cdc: {}
+  %{~ endif ~}
+
+tidb_servers:
+  %{~ for host in tidb_hosts ~}
+  - host: ${host}
+  %{~ endfor ~}
+
+tikv_servers:
+  %{~ for host in tikv_hosts ~}
+  - host: ${host}
+  %{~ endfor ~}
+
+%{~ if length(tiflash_hosts) > 0 ~}
+tiflash_servers:
+  %{~ for host in tiflash_hosts ~}
+  - host: ${host}
+  %{~ endfor ~}
+%{~ endif ~}
+
+%{~ if length(ticdc_hosts) > 0 ~}
+cdc_servers:
+  %{~ for host in ticdc_hosts ~}
+  - host: ${host}
+  %{~ endfor ~}
+%{~ endif ~}
+
+pd_servers:
+  - host: 172.31.8.1
+
+monitoring_servers:
+  - host: 172.31.8.1
+
+grafana_servers:
+  - host: 172.31.8.1
