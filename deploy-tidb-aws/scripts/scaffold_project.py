@@ -6,13 +6,15 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shlex
 import shutil
 import sys
+from datetime import datetime
 from pathlib import Path
 
 
 DEFAULTS = {
-    "namespace": "tidb-cluster",
+    "namespace": None,
     "n_pd": 1,
     "n_tidb": 3,
     "n_tikv": 3,
@@ -83,12 +85,19 @@ def parse_extra_service(value: str) -> tuple[str, dict[str, object]]:
     return service_name(match.group("name")), item
 
 
+def default_target(namespace_value: str) -> Path:
+    return Path.home() / "test" / f"tidb-aws-{namespace_value}"
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Scaffold a Terraform project for TiDB on AWS."
     )
-    parser.add_argument("--target", required=True, help="Output directory.")
-    parser.add_argument("--namespace", type=namespace, default=DEFAULTS["namespace"])
+    parser.add_argument(
+        "--target",
+        help="Output directory. Defaults to $HOME/test/tidb-aws-<namespace>.",
+    )
+    parser.add_argument("--namespace", type=namespace)
     parser.add_argument("--n-pd", type=non_negative_int, default=DEFAULTS["n_pd"])
     parser.add_argument("--n-tidb", type=non_negative_int, default=DEFAULTS["n_tidb"])
     parser.add_argument("--n-tikv", type=non_negative_int, default=DEFAULTS["n_tikv"])
@@ -128,6 +137,8 @@ def parse_args() -> argparse.Namespace:
         help="Replace target directory if it already exists.",
     )
     args = parser.parse_args()
+    if args.namespace is None:
+        args.namespace = f"tidb-cluster-{datetime.now().strftime('%y%m%d%H%M')}"
     if args.n_pd != 1:
         raise SystemExit("This template supports exactly one PD node; use --n-pd 1.")
     args.image = args.image or AMI_BY_REGION.get(args.region)
@@ -137,6 +148,7 @@ def parse_args() -> argparse.Namespace:
         )
     args.cluster_name = args.cluster_name or args.namespace
     args.extra_services = dict(args.extra_service)
+    args.target = args.target or str(default_target(args.namespace))
     return args
 
 
@@ -193,6 +205,7 @@ def update_provider(project: Path, args: argparse.Namespace) -> None:
 
 def write_deployment_metadata(project: Path, args: argparse.Namespace) -> None:
     metadata = {
+        "deployment_path": str(project),
         "namespace": args.namespace,
         "cluster_name": args.cluster_name,
         "tidb_version": args.tidb_version,
@@ -214,6 +227,168 @@ def write_deployment_metadata(project: Path, args: argparse.Namespace) -> None:
     (project / "deployment.json").write_text(json.dumps(metadata, indent=2) + "\n")
 
 
+def render_tidb_version_readme_section(args: argparse.Namespace) -> str:
+    if args.tidb_version == DEFAULTS["tidb_version"]:
+        return """The scaffold requested `latest-stable`; keep the value resolved by the previous command.
+If you intentionally want a fixed version instead, set it directly, for example:
+
+```shell
+tidb_version="v8.5.0"
+```"""
+    return f"""This deployment requested a concrete TiDB version:
+
+```shell
+tidb_version="{args.tidb_version}"
+```"""
+
+
+def write_project_readme(project: Path, args: argparse.Namespace) -> None:
+    cd_project = shlex.quote(str(project))
+    tidb_version_section = render_tidb_version_readme_section(args)
+    readme = f"""# TiDB AWS Deployment: {args.cluster_name}
+
+Deployment path: `{project}`
+
+This directory contains the Terraform configuration and local state for this TiDB
+AWS deployment. Run Terraform commands from this directory.
+
+## Metadata
+
+- Namespace: `{args.namespace}`
+- Cluster name: `{args.cluster_name}`
+- TiDB version request: `{args.tidb_version}`
+- TiCDC architecture: `{args.ticdc_architecture}`
+- AWS profile: `{args.aws_profile}`
+- AWS region: `{args.region}`
+- Deployment metadata: `deployment.json`
+
+The template exposes SSH, Grafana, and TiDB Dashboard ports publicly. Review the
+security group rules before using this deployment for anything sensitive.
+
+## Preflight
+
+```shell
+cd {cd_project}
+aws sts get-caller-identity --profile {args.aws_profile}
+test -f ~/.ssh/id_rsa.pub
+test -f master_key -a -f master_key.pub || ssh-keygen -t rsa -b 4096 -f ./master_key -q -N ""
+terraform init
+terraform fmt -check
+terraform validate
+```
+
+If the AWS identity check fails, refresh SSO login and retry:
+
+```shell
+aws sso login --profile {args.aws_profile}
+aws sts get-caller-identity --profile {args.aws_profile}
+```
+
+## Provision Or Update AWS VMs
+
+Prefer a saved Terraform plan:
+
+```shell
+cd {cd_project}
+terraform plan -out=tfplan
+terraform apply tfplan
+```
+
+For non-interactive runs only:
+
+```shell
+terraform apply -auto-approve
+```
+
+Inspect outputs after apply:
+
+```shell
+terraform output
+terraform output -raw ssh-center
+terraform output -raw url-grafana
+terraform output -raw url-tidb-dashboard
+terraform output private-ip-pd
+terraform output private-ip-tidb
+terraform output private-ip-tikv
+terraform output private-ip-tiflash
+terraform output private-ip-ticdc
+terraform output private-ip-extra-services
+terraform output ssh-extra-services
+```
+
+## Deploy Or Start TiDB From The Center VM
+
+Get the center VM SSH command locally:
+
+```shell
+cd {cd_project}
+terraform output -raw ssh-center
+```
+
+On the center VM, wait for cloud-init and verify TiUP:
+
+```shell
+cloud-init status --wait
+test -f ~/topology.yaml
+test -f ~/.ssh/id_rsa
+tiup --version
+```
+
+If `deployment.json` records `latest-stable`, resolve the concrete stable TiDB
+version on the center VM before deploying:
+
+```shell
+tidb_version="$(
+  tiup list tidb --refresh 2>/dev/null |
+    awk '{{print $1}}' |
+    grep -E '^v[0-9]+\\.[0-9]+\\.[0-9]+$' |
+    sort -V |
+    tail -n 1
+)"
+test -n "$tidb_version"
+```
+
+{tidb_version_section}
+
+Deploy and start the TiUP cluster from the center VM:
+
+```shell
+tiup cluster deploy {args.cluster_name} "$tidb_version" ./topology.yaml --user {args.username} -i ~/.ssh/id_rsa --yes
+tiup cluster start {args.cluster_name} --yes
+tiup cluster display {args.cluster_name}
+```
+
+If the TiUP cluster already exists:
+
+```shell
+tiup cluster list
+tiup cluster display {args.cluster_name}
+tiup cluster start {args.cluster_name} --yes
+```
+
+## Validate TiDB
+
+From the center VM:
+
+```shell
+mysql -u root --host 127.0.0.1 --port 4000 -e "select tidb_version();"
+```
+
+## Destroy AWS Resources
+
+Only run destroy when the cluster should be removed:
+
+```shell
+cd {cd_project}
+terraform destroy -auto-approve
+```
+
+Leave local files such as `master_key`, `master_key.pub`, `.tfstate`, and
+`tfplan` in place unless you intentionally want to remove local artifacts.
+"""
+    (project / "README.md").write_text(readme)
+
+
 def main() -> int:
     args = parse_args()
     script_dir = Path(__file__).resolve().parent
@@ -223,7 +398,12 @@ def main() -> int:
 
     if not template.is_dir():
         raise SystemExit(f"Template directory does not exist: {template}")
-    protected = {Path("/").resolve(), Path.home().resolve(), skill_dir.resolve()}
+    protected = {
+        Path("/").resolve(),
+        Path.home().resolve(),
+        (Path.home() / "test").resolve(),
+        skill_dir.resolve(),
+    }
     if target in protected or skill_dir.resolve() in target.parents:
         raise SystemExit(f"Refusing unsafe target directory: {target}")
     if target.exists():
@@ -231,13 +411,16 @@ def main() -> int:
             raise SystemExit(f"Target already exists; pass --force to replace: {target}")
         shutil.rmtree(target)
 
+    target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(template, target)
     (target / "locals_common.tf").write_text(render_locals_common(args))
     update_advanced(target, args)
     update_provider(target, args)
     write_deployment_metadata(target, args)
+    write_project_readme(target, args)
 
     print(f"Created Terraform project: {target}")
+    print(f"Deployment path: {target}")
     print(f"Cluster name: {args.cluster_name}")
     print(f"TiDB version: {args.tidb_version}")
     print(f"TiCDC architecture: {args.ticdc_architecture}")

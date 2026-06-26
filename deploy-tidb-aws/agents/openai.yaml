@@ -1,4 +1,4 @@
 interface:
   display_name: "Deploy TiDB AWS"
   short_description: "Scaffold and deploy TiDB on AWS with Terraform"
-  default_prompt: "Use $deploy-tidb-aws to deploy a TiDB cluster on AWS with Terraform; default to 1 PD, 3 TiDB, 3 TiKV, 1 TiFlash, 3 TiCDC, and new TiCDC architecture unless old architecture is explicitly requested."
+  default_prompt: "Use $deploy-tidb-aws to deploy a TiDB cluster on AWS with Terraform under $HOME/test; default to 1 PD, 3 TiDB, 3 TiKV, 1 TiFlash, 3 TiCDC, and new TiCDC architecture unless old architecture is explicitly requested. Report the full deployment path and use the generated README.md for Terraform operations."
