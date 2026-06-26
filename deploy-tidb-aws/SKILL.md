@@ -8,10 +8,14 @@ description: Deploy, start, validate, or destroy TiDB clusters on AWS using Terr
 ## Overview
 
 Use this skill to create a self-contained Terraform project from the bundled template, provision AWS VMs, and deploy/start TiDB with TiUP from the center VM.
+Scaffolded projects default to `$HOME/test/tidb-aws-<namespace>` so later agents can find the deployment directory and operate Terraform after the original agent exits.
+Each generated project includes a local `README.md` with Terraform operation commands.
 
 Before running live infrastructure commands, read [references/deployment.md](references/deployment.md).
 
 ## Defaults
+
+When `--namespace` is omitted, it defaults to `tidb-cluster-<YYMMDDHHMM>` (current local time).
 
 When the prompt omits a count, use:
 
@@ -34,14 +38,23 @@ Use the new TiCDC architecture by default. If the prompt explicitly asks for old
 Resolve the skill directory, then scaffold a Terraform project:
 
 ```shell
-python3 <skill-dir>/scripts/scaffold_project.py --target ./tidb-aws-cluster
+python3 <skill-dir>/scripts/scaffold_project.py
 ```
+
+Namespace defaults to `tidb-cluster-<YYMMDDHHMM>` (e.g. `tidb-cluster-2506261730`). Override with `--namespace` if needed:
+
+```shell
+python3 <skill-dir>/scripts/scaffold_project.py --namespace my-cluster
+```
+
+When `--target` is omitted, the scaffold script creates the project at `$HOME/test/tidb-aws-<namespace>`.
+The script prints the absolute deployment path; report that path to the user.
 
 Pass explicit counts only when the user requested them:
 
 ```shell
 python3 <skill-dir>/scripts/scaffold_project.py \
-  --target ./tidb-aws-cluster \
+  --target "$HOME/test/tidb-aws-cluster" \
   --namespace tidb-cluster \
   --n-pd 1 \
   --n-tidb 3 \
@@ -53,6 +66,7 @@ python3 <skill-dir>/scripts/scaffold_project.py \
 ```
 
 Then follow [references/deployment.md](references/deployment.md) from the generated project directory.
+Use the generated `README.md` in that directory as the local Terraform operation guide.
 
 ## Safety
 
@@ -62,4 +76,4 @@ Then follow [references/deployment.md](references/deployment.md) from the genera
 - Warn the user that the template exposes SSH, Grafana, and TiDB Dashboard ports publicly, matching the source repo.
 - Use a saved Terraform plan before apply unless the user explicitly asks for non-interactive deployment.
 - Start TiUP clusters with `tiup cluster start <cluster-name> --yes`; do not add `--init`.
-- After deployment/startup, display and report node IPs for all core and extra service nodes.
+- After deployment/startup, display and report the absolute deployment path, the generated `README.md` path, and node IPs for all core and extra service nodes.

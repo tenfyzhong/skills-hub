@@ -6,7 +6,7 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 
 - analyse-issue
 - create-pr
-- deploy-tidb-aws
+- deploy-tidb-aws - scaffold TiDB AWS Terraform deployments under `$HOME/test` with a generated operation README
 - implement-issue
 - new-issue
 - pr-review

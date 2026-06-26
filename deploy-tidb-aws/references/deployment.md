@@ -12,7 +12,9 @@ Parse natural language requests into Terraform counts:
 - If the user gives a version, use it as the TiUP version. Otherwise resolve the latest stable TiDB release at deployment time.
 - If the user gives a cluster name, use it. Otherwise use the Terraform `namespace`.
 - If the user gives an AWS profile, use it for both AWS CLI login checks and the Terraform provider. Otherwise use `default`.
-- If the user gives no target directory, use `./tidb-aws-<namespace>`.
+- If the user gives no target directory, use `$HOME/test/tidb-aws-<namespace>`.
+- If the user gives a target directory, prefer a path under `$HOME/test` unless they explicitly require another location.
+- Always report the absolute deployment path after scaffold and after deploy/start.
 
 The template supports only one PD server in practice. Keep `n_pd = 1` even if the user omits it.
 
@@ -26,7 +28,6 @@ Run the scaffold script from the skill directory:
 
 ```shell
 python3 <skill-dir>/scripts/scaffold_project.py \
-  --target ./tidb-aws-cluster \
   --namespace tidb-cluster \
   --aws-profile default \
   --n-tidb 3 \
@@ -37,7 +38,9 @@ python3 <skill-dir>/scripts/scaffold_project.py \
   --extra-service service-name=1
 ```
 
-The generated project contains Terraform files, cloud-init templates, rendered defaults in `locals_common.tf`, and `deployment.json` with the requested cluster metadata.
+When `--target` is omitted, the generated project is created under `$HOME/test/tidb-aws-<namespace>`.
+The generated project contains Terraform files, cloud-init templates, rendered defaults in `locals_common.tf`, `deployment.json` with the requested cluster metadata, and `README.md` with Terraform operation guidance.
+The scaffold command prints the absolute deployment path; keep using that path for all local Terraform commands.
 
 ## Generated Project Shape
 
@@ -46,7 +49,8 @@ Important files:
 - `locals_common.tf`: namespace, role counts, `username`.
 - `locals_advanced.tf`: AWS region, AMI, EC2 instance types, SSH key paths.
 - `main.tf`: AWS provider profile and region wiring.
-- `deployment.json`: requested metadata, including `aws_profile` and `ticdc_architecture`.
+- `deployment.json`: requested metadata, including `deployment_path`, `aws_profile`, and `ticdc_architecture`.
+- `README.md`: local Terraform operation guide for the generated deployment.
 - `files/topology.yaml.tftpl`: TiUP topology written to the center VM.
 - `data_cloudinit.tf`: writes `topology.yaml`, HAProxy config, and SSH keys to the center VM.
 - `outputs.tf`: exposes `ssh-center`, Grafana URL, TiDB Dashboard URL, core node private IPs, and generic extra service outputs.
@@ -203,6 +207,8 @@ mysql -u root --host 127.0.0.1 --port 4000 -e "select tidb_version();"
 After deploy/start, display node IPs from the local generated project directory:
 
 ```shell
+pwd -P
+test -f README.md
 terraform output private-ip-pd
 terraform output private-ip-tidb
 terraform output private-ip-tikv
@@ -215,6 +221,8 @@ terraform output ssh-extra-services
 
 Report these local outputs:
 
+- absolute deployment path
+- generated `README.md` path
 - `ssh-center`
 - `url-grafana`
 - `url-tidb-dashboard`
