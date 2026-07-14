@@ -10,6 +10,7 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 - implement-issue
 - new-issue
 - pr-review
+- resume-agent-session - reconstruct compact working context from Codex, Pi, or Claude Code sessions
 - resolve-git-conflicts
 
 ## Install Skills (via vercel-labs/skills)
