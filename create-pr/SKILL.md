@@ -1,11 +1,11 @@
 ---
 name: create-pr
-description: Create a Pull Request from the current branch. Syncs upstream main/master, updates current branch, handles fork remotes intelligently, and generates PR title/description from diff and commits. Respects PR templates if present. REQUIRES Must be in a git repository with gh CLI available.
+description: Create a GitHub Pull Request from the current repository's work.
 ---
 
 # Create PR Skill
 
-Create a Pull Request from the current branch with intelligent remote detection and PR content generation.
+Create a Pull Request from current work with automatic branch creation, commit creation, intelligent remote detection, and PR content generation.
 
 ## Prerequisites Check (MUST verify first)
 
@@ -18,15 +18,7 @@ git rev-parse --is-inside-work-tree
 # 2. Check if gh CLI is available and authenticated
 gh auth status
 
-# 3. Check current branch is not main/master
-CURRENT_BRANCH=$(git branch --show-current)
-DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
-if [ "$CURRENT_BRANCH" = "$DEFAULT_BRANCH" ]; then
-  echo "ERROR: Cannot create PR from default branch"
-  exit 1
-fi
-
-# 4. Check for uncommitted changes (warn user if any)
+# 3. Record the current working tree state
 git status --porcelain
 ```
 
@@ -34,8 +26,8 @@ If checks fail, STOP and inform the user:
 
 - Not in git repo → "This skill requires a git repository. Please navigate to a git project."
 - gh not authenticated → "Please run `gh auth login` first."
-- On default branch → "You are on the default branch. Please checkout a feature branch first."
-- Uncommitted changes → "You have uncommitted changes. Please commit or stash them first."
+
+Do not stop or ask the user to switch branches, commit changes, or stash changes. Handle the current branch and uncommitted changes automatically in the workflow below.
 
 ## Input
 
@@ -113,25 +105,49 @@ UPSTREAM_REMOTE=${UPSTREAM_REMOTE:-origin}
 FORK_REMOTE=${FORK_REMOTE:-origin}
 ```
 
-### Step 3: Sync Upstream Default Branch
+### Step 3: Create a Feature Branch and Commit Changes
+
+Prepare the work for a PR before rebasing or pushing:
+
+1. Inspect `git status --short`, staged changes, unstaged changes, and untracked file names.
+2. If `CURRENT_BRANCH` is `DEFAULT_BRANCH`, `main`, or `master`, generate a concise branch name from the user's request and the changes. Follow repository naming conventions when present, avoid collisions with local and remote branches, create the branch, and update `CURRENT_BRANCH`.
+3. If the working tree contains changes, stage the intended current work and commit it. Generate a concise commit message from the request and diff, and follow repository commit style, sign-off, and signing requirements.
+4. Perform the branch creation and commit without asking the user to choose a branch name, switch branches, provide a commit message, or commit the changes themselves.
+
+```bash
+# Create a feature branch automatically when currently on the base branch.
+if [ "$CURRENT_BRANCH" = "$DEFAULT_BRANCH" ] || \
+   [ "$CURRENT_BRANCH" = "main" ] || \
+   [ "$CURRENT_BRANCH" = "master" ]; then
+  # Derive NEW_BRANCH from the request and diff, for example feat/add-export.
+  # Add a short numeric suffix if the name already exists locally or remotely.
+  git switch -c "$NEW_BRANCH"
+  CURRENT_BRANCH=$NEW_BRANCH
+fi
+
+# Commit all intended current work when the tree is dirty.
+if [ -n "$(git status --porcelain)" ]; then
+  git status --short
+  git diff
+  git diff --cached
+  git add -A
+  git diff --cached
+  # Derive COMMIT_MESSAGE from the request and staged diff. Add flags such as
+  # -s or -S when required by repository instructions.
+  git commit -m "$COMMIT_MESSAGE"
+fi
+```
+
+Do not include editor artifacts, generated secrets, credentials, or unrelated files in the commit. If repository instructions require tests before committing, run them and include the result in the PR description.
+
+### Step 4: Sync and Rebase onto the Upstream Default Branch
 
 ```bash
 # Fetch latest from upstream
-git fetch $UPSTREAM_REMOTE $DEFAULT_BRANCH
+git fetch "$UPSTREAM_REMOTE" "$DEFAULT_BRANCH"
 
-# Update local default branch
-git checkout $DEFAULT_BRANCH
-git pull $UPSTREAM_REMOTE $DEFAULT_BRANCH
-
-# Return to feature branch
-git checkout $CURRENT_BRANCH
-```
-
-### Step 4: Update Current Branch with Upstream
-
-```bash
 # Rebase current branch onto latest default branch
-git rebase $UPSTREAM_REMOTE/$DEFAULT_BRANCH
+git rebase "$UPSTREAM_REMOTE/$DEFAULT_BRANCH"
 
 # If rebase fails, inform user
 if [ $? -ne 0 ]; then
@@ -334,6 +350,8 @@ gh pr view --json url,number,title,state
 | Situation | Action |
 |-----------|--------|
 | No commits ahead of base | "No changes to create PR. Your branch is up to date with [base]." |
+| Branch name already exists | Generate another meaningful name with a short numeric suffix and continue. |
+| Commit fails | Report the exact failure while preserving the user's working tree and staged changes. |
 | Rebase conflicts | "Rebase failed due to conflicts. Please resolve manually and re-run." |
 | Push rejected | "Push failed. Check if you have write access to the remote." |
 | PR already exists | "A PR already exists for this branch: [URL]. Opening existing PR." |
@@ -377,3 +395,4 @@ ISSUES=$(git log $UPSTREAM_REMOTE/$DEFAULT_BRANCH..HEAD --pretty=format:"%B" | g
 4. **Conventional Commits**: If project uses conventional commits, follow the format
 5. **Issue Linking**: Preserve issue references from commit messages
 6. **Review Before Submit**: Show generated title/description for user approval before creating PR
+7. **No Branch or Commit Prompt**: Automatically create a feature branch and commit current work; never ask the user to perform or confirm those operations

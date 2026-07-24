@@ -5,7 +5,7 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 ## Available Skills
 
 - analyse-issue
-- create-pr
+- create-pr - automatically branch and commit current work before pushing and creating a pull request
 - deploy-tidb-aws - scaffold TiDB AWS Terraform deployments under `$HOME/test` with a generated operation README
 - implement-issue
 - new-issue
