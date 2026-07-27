@@ -1,13 +1,13 @@
 ---
 name: deploy-tidb-aws
-description: Deploy, start, validate, or destroy TiDB clusters on AWS using Terraform and TiUP from a bundled terraform-up-tidb-aws template. Use when the user asks to deploy a TiDB cluster with Terraform, specifies PD/TiDB/TiKV/TiFlash/TiCDC node counts, requests extra service or helper nodes by name, selects new or old TiCDC architecture, or wants an agent to provision and start TiDB on AWS. If core node counts are omitted, default to 1 PD, 3 TiDB, 3 TiKV, 1 TiFlash, and 3 TiCDC. If the TiDB version is omitted, resolve and use the latest stable TiDB release, never nightly.
+description: Deploy or manage TiDB clusters on AWS with Terraform and TiUP.
 ---
 
 # Deploy TiDB AWS
 
 ## Overview
 
-Use this skill to create a self-contained Terraform project from the bundled template, provision AWS VMs, and deploy/start TiDB with TiUP from the center VM.
+Use this skill to create a self-contained Terraform project from the bundled template, provision or destroy AWS VMs with Terraform, and deploy, start, or validate TiDB with TiUP from the center VM.
 Scaffolded projects default to `$HOME/test/tidb-aws-<namespace>` so later agents can find the deployment directory and operate Terraform after the original agent exits.
 Each generated project includes a local `README.md` with Terraform operation commands.
 

@@ -1,6 +1,6 @@
 ---
 name: analyse-issue
-description: Analyze GitHub issues by link or issue number. Use when a user says "analyse issue"/"analyze issue" or provides a GitHub issue URL/number and asks to fetch the issue content, verify it matches the current repo, and inspect local code to confirm the problem.
+description: Analyze a GitHub issue from an issue URL or number.
 ---
 
 # Analyse Issue
