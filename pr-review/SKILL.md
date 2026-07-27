@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: Comprehensive PR code review skill for git repositories. Use when reviewing a GitHub/GitLab PR by providing a PR link. Analyzes changes against merge base, explains what the PR does, provides review guidelines, identifies issues sorted by severity, evaluates test coverage, and raises uncertain questions. REQUIRES Must be in a git repository with gh CLI available.
+description: Review a GitHub or GitLab pull request from a PR URL or number.
 ---
 
 # PR Review Skill

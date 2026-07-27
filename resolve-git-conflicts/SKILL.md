@@ -1,6 +1,6 @@
 ---
 name: resolve-git-conflicts
-description: Use when resolving Git conflicts from merge, rebase, cherry-pick, or stash apply/pop via CLI, especially with unmerged paths, standard Git conflict marker lines, or messages like "both modified" or "needs merge".
+description: Resolve Git conflicts from merge, rebase, cherry-pick, or stash operations.
 ---
 
 # Resolve Git Conflicts

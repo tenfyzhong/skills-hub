@@ -1,6 +1,6 @@
 ---
 name: new-issue
-description: Use when the user asks to create a GitHub issue from the current conversation context (e.g., "new issue", "create issue", "file an issue", bug/feature request) with a target repo given or auto-detected, and gh CLI is available/authenticated.
+description: Create or file a GitHub issue, bug report, or feature request from the conversation context.
 ---
 
 # New Issue Skill

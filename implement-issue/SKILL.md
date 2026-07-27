@@ -1,6 +1,6 @@
 ---
 name: implement-issue
-description: Implement a GitHub issue end-to-end. Accepts issue number or URL, syncs to latest main/master, creates a feature branch, analyzes the issue, explores the codebase thoroughly, and implements the solution. REQUIRES Must be in a git repository with gh CLI available.
+description: Implement a GitHub issue from an issue URL or number.
 ---
 
 # Implement Issue Skill
