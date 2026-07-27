@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deploy EC2 AWS"
+  short_description: "Deploy named EC2 node groups with Terraform"
+  default_prompt: "Use $deploy-ec2-aws to deploy one or more named EC2 node groups on AWS with Terraform, stable public IPs, and working private networking."
