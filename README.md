@@ -6,6 +6,7 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 
 - analyse-issue
 - create-pr - automatically branch and commit current work before pushing and creating a pull request
+- deploy-ec2-aws - deploy named EC2 node groups with Terraform, private networking, and stable public IPs
 - deploy-tidb-aws - scaffold TiDB AWS Terraform deployments under `$HOME/test` with a generated operation README
 - implement-issue
 - new-issue

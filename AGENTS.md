@@ -6,8 +6,8 @@
 - Repository docs are minimal; `README.md` is the landing page and should reference key contributor guidance.
 
 ## Build, Test, and Development Commands
-- No build, test, or runtime commands are defined for this repository today.
-- Changes are documentation edits; use standard Git workflow commands (for example, `git status` and `git diff`) to review work.
+- Most changes are documentation edits; use standard Git workflow commands (for example, `git status` and `git diff`) to review work.
+- Run Python skill tests with `python3 -m unittest discover -s <skill-name>/tests -p 'test_*.py'`.
 
 ## Coding Style & Naming Conventions
 - Avoid trailing whitespace on all lines.
@@ -16,8 +16,8 @@
 - Naming: skill directories use kebab-case (for example, `new-issue/`), and the skill definition file is always `SKILL.md`.
 
 ## Testing Guidelines
-- There is no automated test suite in this repository.
-- If tests are added in the future, document the framework and naming convention here (for example, `tests/<feature>_test.*`).
+- Use Python's `unittest` framework for bundled Python scripts.
+- Name Python tests `<skill-name>/tests/test_*.py`.
 
 ## Commit & Pull Request Guidelines
 - Follow the existing commit style: `type(scope): summary` (for example, `feat(analyse-issue): improve issue analysis instructions`).
