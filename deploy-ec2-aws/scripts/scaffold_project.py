@@ -348,6 +348,28 @@ terraform output -json instance_types
 terraform output -json ssh_commands
 ```
 
+## Post-Apply Validation
+
+Wait until both AWS status checks are healthy for every instance ID.
+Test every generated SSH command with a non-destructive command such as `hostname`.
+
+Require the same inputs to produce a no-change plan:
+
+```shell
+terraform plan -detailed-exitcode
+```
+
+Exit code `0` means the deployment is stable. Exit code `2` means Terraform still
+proposes changes; inspect the plan and stop on any unrequested destroy or
+replacement.
+
+If direct SSH to one node times out, confirm the current operator public IPv4
+still matches `ssh_cidr`, confirm both EC2 status checks are `ok`, and test the
+node's private IP through a reachable deployment node. If private SSH succeeds,
+report the public-path failure separately from instance health.
+Do not replace an Elastic IP solely because one operator network times out.
+Replacement is not a deterministic routing fix.
+
 ## Destroy
 
 Only destroy when the AWS resources should be removed:

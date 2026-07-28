@@ -6,7 +6,7 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 
 - analyse-issue - analyze a GitHub issue from an issue URL or number
 - create-pr - automatically branch and commit current work before pushing and creating a pull request
-- deploy-ec2-aws - deploy predictably named EC2 node groups with Terraform, private networking, and stable public IPs
+- deploy-ec2-aws - deploy and validate named EC2 nodes with Terraform, drift-safe updates, private networking, and stable public IPs
 - deploy-tidb-aws - deploy or manage TiDB clusters on AWS with Terraform and TiUP
 - implement-issue - implement a GitHub issue from an issue URL or number
 - new-issue - create or file a GitHub issue, bug report, or feature request from the conversation context

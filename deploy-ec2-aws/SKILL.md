@@ -1,6 +1,6 @@
 ---
 name: deploy-ec2-aws
-description: Deploy AWS EC2 nodes using Terraform.
+description: Deploy and manage AWS EC2 nodes using Terraform.
 ---
 
 # Deploy EC2 AWS
@@ -88,4 +88,6 @@ For additional public ports, add the narrowest security-group rule that meets th
 - Warn that AWS charges for public IPv4 addresses, including attached Elastic IPs.
 - Do not print Terraform state, credentials, or private SSH key material.
 - Do not use `--force` on a deployment directory containing state unless the user explicitly asked to replace its local project.
+- After apply, require a no-change Terraform plan and stop on any unrequested destroy or replacement.
+- Test SSH on every node, not only one representative node per group.
 - After apply, report the absolute deployment path, generated `README.md`, public/private IP outputs, resolved instance types, and SSH commands.
