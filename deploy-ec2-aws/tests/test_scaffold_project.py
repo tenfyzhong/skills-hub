@@ -9,6 +9,7 @@ from pathlib import Path
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = SKILL_DIR / "scripts" / "scaffold_project.py"
+TERRAFORM_MAIN_PATH = SKILL_DIR / "assets" / "terraform-ec2-aws" / "main.tf"
 
 
 def load_scaffold_module():
@@ -56,6 +57,15 @@ class NodeSpecTest(unittest.TestCase):
 
 
 class ScaffoldProjectTest(unittest.TestCase):
+    def test_uses_exact_group_name_for_single_node_and_suffixes_multiple_nodes(self):
+        main = TERRAFORM_MAIN_PATH.read_text()
+
+        self.assertIn(
+            'instance_name = group.count == 1 ? group_name : "${group_name}-${format("%02d", index + 1)}"',
+            main,
+        )
+        self.assertIn("Name               = each.value.instance_name", main)
+
     def test_creates_self_contained_terraform_project(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)

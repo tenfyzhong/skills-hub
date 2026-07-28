@@ -290,6 +290,9 @@ This self-contained Terraform project creates named EC2 node groups in one VPC
 and public subnet. Nodes communicate freely over private IPs. SSH is limited to
 `{args.ssh_cidr}`, and every node receives a stable Elastic IP.
 
+Single-node groups use the exact group name as the EC2 `Name` tag. Multi-node
+groups use zero-padded suffixes such as `api-01` and `api-02`.
+
 Elastic IPs incur AWS public IPv4 charges while allocated. Destroy the deployment
 when it is no longer needed.
 

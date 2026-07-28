@@ -7,6 +7,7 @@ locals {
     for group_name, group in var.node_groups : {
       for index in range(group.count) :
       "${group_name}-${format("%02d", index + 1)}" => {
+        instance_name = group.count == 1 ? group_name : "${group_name}-${format("%02d", index + 1)}"
         group_name    = group_name
         index         = index + 1
         cpu           = group.cpu
@@ -49,7 +50,7 @@ resource "aws_instance" "node" {
   }
 
   tags = {
-    Name               = "${var.namespace}-${each.key}"
+    Name               = each.value.instance_name
     NodeGroup          = each.value.group_name
     RequestedCPU       = tostring(each.value.cpu)
     RequestedMemoryGiB = tostring(each.value.memory_gib)

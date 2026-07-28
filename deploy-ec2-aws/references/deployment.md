@@ -15,6 +15,7 @@
 Translate each requested group into one `--node NAME=COUNT[:CPU:MEMORY_GIB]` argument.
 
 - Require a unique lowercase name and a positive count for every group.
+- Treat the node group name as the requested EC2 name: use it unchanged for one node, or append zero-padded sequence numbers for multiple nodes. Never prefix the EC2 `Name` tag with the deployment namespace.
 - Use `2` vCPU and `4` GiB when CPU or memory is omitted.
 - Treat CPU and memory as minimums; report the resolved EC2 instance type.
 - Preserve explicit counts and specifications.
@@ -47,6 +48,8 @@ The generated project contains:
 - `outputs.tf`: addresses, instance IDs/types, and SSH commands grouped by node name
 
 Always report the generated absolute path and keep using it for local commands.
+
+The generated EC2 `Name` tags are deterministic: `api=1` creates `api`, while `api=2` creates `api-01` and `api-02`. The namespace continues to scope deployment-level resources such as the VPC, subnet, key pair, and Elastic IPs.
 
 ## Authenticate To AWS
 
