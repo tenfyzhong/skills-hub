@@ -30,6 +30,8 @@ worker=3:4:8
 
 The format is `NAME=COUNT[:CPU:MEMORY_GIB]`. CPU and memory are minimums; the resolver may select a slightly larger x86_64 instance type when AWS has no exact match. Do not silently change an explicit count.
 
+Use the node group name as the EC2 `Name` tag. For a group with one node, use the exact group name. For a group with multiple nodes, append zero-padded sequence numbers such as `api-01` and `api-02`. Do not prefix EC2 names with the deployment namespace.
+
 Defaults:
 
 - Namespace: `ec2-nodes-<YYMMDDHHMM>` using local time
