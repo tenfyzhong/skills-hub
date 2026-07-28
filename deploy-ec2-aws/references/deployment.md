@@ -8,6 +8,7 @@
 - [Initialize And Validate](#initialize-and-validate)
 - [Provision](#provision)
 - [Validate And Report](#validate-and-report)
+- [Troubleshoot SSH](#troubleshoot-ssh)
 - [Update Or Destroy](#update-or-destroy)
 
 ## Parse The Request
@@ -50,6 +51,8 @@ The generated project contains:
 Always report the generated absolute path and keep using it for local commands.
 
 The generated EC2 `Name` tags are deterministic: `api=1` creates `api`, while `api=2` creates `api-01` and `api-02`. The namespace continues to scope deployment-level resources such as the VPC, subnet, key pair, and Elastic IPs.
+
+Keep `map_public_ip_on_launch = false` on the subnet and let `aws_eip.node` own public addressing. Do not set `associate_public_ip_address` on `aws_instance.node`: after an EIP is attached, the AWS provider can read that optional/computed attribute as enabled and propose replacing otherwise unchanged instances.
 
 ## Authenticate To AWS
 
@@ -108,7 +111,15 @@ terraform output -json instance_types
 terraform output -json ssh_commands
 ```
 
-Verify the number of public and private IPs for every group equals its requested count. When network access permits, test one SSH command per group using non-destructive commands such as `hostname` and `ip -brief address`.
+Verify the number of public and private IPs for every group equals its requested count. Wait for both EC2 status checks to pass for every instance. Test every generated SSH command with a non-destructive command such as `hostname`.
+
+Run a fresh plan after apply:
+
+```shell
+terraform plan -detailed-exitcode
+```
+
+Require exit code `0`. Exit code `2` means Terraform still proposes changes; inspect the plan and stop on any unrequested destroy or replacement. Do not treat a successful apply as complete while the same inputs produce another change.
 
 Report:
 
@@ -119,9 +130,27 @@ Report:
 - SSH commands grouped by node name
 - Any SSH or regional instance-availability checks that could not be completed
 
+## Troubleshoot SSH
+
+If direct SSH to a node times out:
+
+1. Detect the operator's current public IPv4 address again and compare it with `ssh_cidr` in `terraform.tfvars.json`. If it changed, plan and apply only the security-group update.
+2. Confirm the instance is `running` and both AWS system and instance status checks are `ok`.
+3. If another deployment node is reachable, use it as a jump host to test the failed node's private IP:
+
+   ```shell
+   ssh -i <private-key> \
+     -J <ssh-user>@<reachable-public-ip> \
+     <ssh-user>@<failed-private-ip> hostname
+   ```
+
+4. If private SSH succeeds, verify that SSH listens on all interfaces and that the instance has a default route. Report the direct-public-path failure separately from instance health.
+
+Do not replace an Elastic IP solely because one operator network times out. EIP replacement is not a deterministic routing fix. Replace an EIP only when AWS reports an incorrect association or the user explicitly requests it, and apply only a reviewed plan that leaves all instances untouched.
+
 ## Update Or Destroy
 
-For an existing deployment, edit `terraform.tfvars.json`, then run `terraform plan` and apply a reviewed plan. Do not re-scaffold with `--force`, because that can remove local state and sever Terraform's ownership record.
+For an existing deployment, edit `terraform.tfvars.json`, then run `terraform plan` and apply a reviewed plan. Stop if the plan replaces an instance without an explicitly requested immutable-field change. Do not re-scaffold with `--force`, because that can remove local state and sever Terraform's ownership record.
 
 Destroy only when explicitly requested:
 

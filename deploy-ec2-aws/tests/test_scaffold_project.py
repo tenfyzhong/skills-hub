@@ -10,6 +10,8 @@ from pathlib import Path
 SKILL_DIR = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = SKILL_DIR / "scripts" / "scaffold_project.py"
 TERRAFORM_MAIN_PATH = SKILL_DIR / "assets" / "terraform-ec2-aws" / "main.tf"
+TERRAFORM_NETWORK_PATH = SKILL_DIR / "assets" / "terraform-ec2-aws" / "network.tf"
+DEPLOYMENT_REFERENCE_PATH = SKILL_DIR / "references" / "deployment.md"
 
 
 def load_scaffold_module():
@@ -57,6 +59,16 @@ class NodeSpecTest(unittest.TestCase):
 
 
 class ScaffoldProjectTest(unittest.TestCase):
+    def test_avoids_public_ip_drift_after_eip_association(self):
+        main = TERRAFORM_MAIN_PATH.read_text()
+        network = TERRAFORM_NETWORK_PATH.read_text()
+
+        self.assertNotRegex(
+            main,
+            r"(?m)^\s*associate_public_ip_address\s*=",
+        )
+        self.assertIn("map_public_ip_on_launch = false", network)
+
     def test_uses_exact_group_name_for_single_node_and_suffixes_multiple_nodes(self):
         main = TERRAFORM_MAIN_PATH.read_text()
 
@@ -105,6 +117,11 @@ class ScaffoldProjectTest(unittest.TestCase):
             self.assertTrue((target / "deployment.json").is_file())
             self.assertTrue((target / "terraform.tfvars.json").is_file())
 
+            readme = (target / "README.md").read_text()
+            self.assertIn("terraform plan -detailed-exitcode", readme)
+            self.assertIn("Test every generated SSH command", readme)
+            self.assertIn("Do not replace an Elastic IP solely", readme)
+
             variables = json.loads((target / "terraform.tfvars.json").read_text())
             self.assertEqual(variables["aws_profile"], "sandbox")
             self.assertEqual(variables["region"], "us-east-1")
@@ -125,6 +142,13 @@ class ScaffoldProjectTest(unittest.TestCase):
             self.assertIn('resource "aws_security_group_rule" "internal"', network)
             self.assertIn('output "public_ips"', outputs)
             self.assertIn('output "ssh_commands"', outputs)
+
+    def test_documents_per_node_ssh_validation_and_safe_diagnosis(self):
+        reference = DEPLOYMENT_REFERENCE_PATH.read_text()
+
+        self.assertIn("Test every generated SSH command", reference)
+        self.assertIn("Do not replace an Elastic IP solely", reference)
+        self.assertIn("terraform plan -detailed-exitcode", reference)
 
 
 if __name__ == "__main__":
