@@ -10,6 +10,7 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 - deploy-tidb-aws - deploy or manage TiDB clusters on AWS with Terraform and TiUP
 - implement-issue - implement a GitHub issue from an issue URL or number
 - new-issue - create or file a GitHub issue, bug report, or feature request from the conversation context
+- natural-writing - polish Chinese and English articles to sound less templated while preserving the author's voice and meaning
 - pr-review - review a GitHub or GitLab pull request from a PR URL or number
 - resume-agent-session - reconstruct compact working context from Codex, Pi, Oh My Pi, or Claude Code sessions
 - resolve-git-conflicts - resolve Git conflicts from merge, rebase, cherry-pick, or stash operations
