@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gamma to Editable PPT"
+  short_description: "Recreate Gamma slides with editable shapes and layouts"
+  default_prompt: "Use $gamma-to-ppt to recreate the Gamma webpage I provide as an editable presentation, preserving its content, composition, icons, and colors, and checking visual differences page by page."

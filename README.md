@@ -8,6 +8,7 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 - create-pr - automatically branch and commit current work before pushing and creating a pull request
 - deploy-ec2-aws - deploy and validate named EC2 nodes with Terraform, drift-safe updates, private networking, and stable public IPs
 - deploy-tidb-aws - deploy or manage TiDB clusters on AWS with Terraform and TiUP
+- gamma-to-ppt - recreate Gamma webpages as editable PPTX or Feishu slides, preserving layouts, vector diagrams, icons, and alignment
 - implement-issue - implement a GitHub issue from an issue URL or number
 - mysql-to-tidb-ddl-check - assess exported MySQL DDL for TiDB 8.5 and TiDB Cloud using minimum capabilities across providers and regions by default (neither provider nor region required), with English, Chinese, or Japanese reports containing located findings, coverage gaps, and remediation advice
 - new-issue - create or file a GitHub issue, bug report, or feature request from the conversation context
@@ -65,6 +66,22 @@ namespace tidb-demo. Use the latest stable TiDB release, 1 PD, 3 TiDB,
 applying it, validate the running cluster, and report the deployment
 directory, generated README, and all node IPs.
 ```
+
+### gamma-to-ppt
+
+[Skill instructions](gamma-to-ppt/SKILL.md)
+
+```text
+Use $gamma-to-ppt to recreate https://example.gamma.site/ as a new Feishu
+presentation. Preserve the original language, page order, layout, colors,
+and icons. Keep text and diagrams editable, redraw unsupported layouts
+with native shapes, and vertically center icons and text in callout boxes.
+Do not use slide screenshots as the output. Compare every page with the
+source and report any remaining differences with the presentation link.
+```
+
+You can request a local PPTX instead, repair an existing conversion, or
+insert specified pages from another presentation at a chosen position.
 
 ### implement-issue
 
