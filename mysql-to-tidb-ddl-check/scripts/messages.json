@@ -115,10 +115,6 @@
     "zh": "检查可见依赖，评估已验证的内置函数或应用代码作为替代。",
     "ja": "確認できる依存関係を調べ、検証済みの組み込み関数やアプリケーションコードへの置き換えを検討してください。"
   },
-  "Verify the Cloud plan, region, and actual full-text capability. Ordinary indexes or LIKE are not equivalent replacements.": {
-    "zh": "核实 Cloud 套餐、区域和实际全文检索能力。普通索引或 LIKE 不是等价替代。",
-    "ja": "Cloud のプラン、リージョン、実際の全文検索機能を確認してください。通常のインデックスや LIKE は同等の代替ではありません。"
-  },
   "Identify spatial query requirements before evaluating alternative services or representations. JSON is not automatically equivalent.": {
     "zh": "先明确空间查询需求，再评估替代服务或数据表示方式。JSON 并不天然等价。",
     "ja": "空間クエリの要件を明確にしてから、代替サービスやデータ表現を検討してください。JSON が同等とは限りません。"
@@ -195,10 +191,6 @@
     "zh": "补充默认数据库、继承设置、依赖或文件执行顺序。目录排序不代表执行顺序。",
     "ja": "既定のデータベース、継承設定、依存関係、またはファイルの実行順序を指定してください。ディレクトリの並び順は実行順序の根拠にはなりません。"
   },
-  "Provide the Cloud plan, provider, region, and capability evidence. Recheck rolling product documentation when using the skill.": {
-    "zh": "提供 Cloud 套餐、云厂商、区域和功能证据。使用 skill 时重新核对持续更新的产品文档。",
-    "ja": "Cloud のプラン、プロバイダー、リージョン、機能の根拠を指定してください。スキルの使用時に更新される製品ドキュメントを再確認してください。"
-  },
   "The source version is unknown, conflicting, or outside the 5.7/8.0/8.4 coverage range.": {
     "zh": "源版本未知、存在冲突，或不在 5.7/8.0/8.4 覆盖范围内。",
     "ja": "移行元バージョンが不明、矛盾している、または対象の 5.7/8.0/8.4 の範囲外です。"
@@ -214,10 +206,6 @@
   "The target is not explicitly TiDB 8.5; version-dependent findings need confirmation.": {
     "zh": "目标未明确为 TiDB 8.5；与版本相关的发现需要确认。",
     "ja": "移行先が TiDB 8.5 と明示されていないため、バージョンに依存する指摘事項は確認が必要です。"
-  },
-  "The Cloud plan, provider, or region is missing.": {
-    "zh": "缺少 Cloud 套餐、云厂商或区域。",
-    "ja": "Cloud のプラン、プロバイダー、またはリージョンが未指定です。"
   },
   " The version condition of an executable comment needs verification.": {
     "zh": " 需要核实可执行注释的版本条件。",
@@ -302,10 +290,6 @@
   "The target lacks the required FULLTEXT index capability; accepting syntax does not mean the index is effective.": {
     "zh": "目标缺少所需的 FULLTEXT 索引能力；接受语法不代表索引生效。",
     "ja": "移行先には必要な FULLTEXT インデックス機能がありません。構文を受け付けてもインデックスが有効とは限りません。"
-  },
-  "Verify the Cloud plan, region, and current full-text availability.": {
-    "zh": "核实 Cloud 套餐、区域和当前全文检索可用性。",
-    "ja": "Cloud のプラン、リージョン、現在の全文検索の利用可否を確認してください。"
   },
   "The target does not support spatial indexes.": {
     "zh": "目标不支持空间索引。",
@@ -746,5 +730,25 @@
   "not-applicable": {
     "zh": "不适用",
     "ja": "該当なし"
+  },
+  "Use the minimum regional capability by default; use verified target evidence only for an explicit regional assessment. Ordinary indexes or LIKE are not equivalent replacements.": {
+    "zh": "默认使用各地区的最小能力集；仅在明确按地区评估时使用已验证的目标证据。普通索引或 LIKE 不是等价替代。",
+    "ja": "既定では各リージョンの最小機能セットを使用し、明示的なリージョン別評価に限り検証済みの移行先情報を使用してください。通常のインデックスや LIKE は同等の代替ではありません。"
+  },
+  "Provide the Cloud plan, provider, and capability evidence. Region is optional. Recheck rolling product documentation when using the skill.": {
+    "zh": "提供 Cloud 套餐、云厂商及能力证据。地区为可选项。使用 skill 时重新核对持续更新的产品文档。",
+    "ja": "Cloud プラン、プロバイダー、機能の根拠を指定してください。リージョンは省略可能です。スキル使用時に更新される製品ドキュメントを再確認してください。"
+  },
+  "The Cloud plan or provider is missing.": {
+    "zh": "缺少 Cloud 套餐或云厂商。",
+    "ja": "Cloud プランまたはプロバイダーが指定されていません。"
+  },
+  "Verify the Cloud plan and current full-text capability evidence.": {
+    "zh": "核对 Cloud 套餐及当前全文检索能力证据。",
+    "ja": "Cloud プランと現在の全文検索機能の根拠を確認してください。"
+  },
+  "FULLTEXT is incompatible with the minimum regional capability set: it is not supported in every region for this Cloud plan. No region was specified.": {
+    "zh": "FULLTEXT 与最小地区能力集不兼容：此 Cloud 套餐并非在所有地区都支持该功能。未指定地区。",
+    "ja": "FULLTEXT はリージョン間の最小機能セットと互換性がありません。この Cloud プランのすべてのリージョンで対応しているわけではありません。リージョンは未指定です。"
   }
 }

@@ -10,7 +10,7 @@ Assess user-provided SQL files or directories offline and produce a compatibilit
 ## Collect inputs
 
 - Establish the file scope, source MySQL server version, and target. The implemented syntax subset covers MySQL 5.7, 8.0, and 8.4. Prefer user-provided version evidence, then the dump server-version header. Continue with explicit limitations when evidence is missing or conflicting.
-- Identify self-managed TiDB 8.5 or the specific TiDB Cloud plan, provider, and region. If the user has not selected a target, ask; do not treat the script's default as the user's choice.
+- Identify self-managed TiDB 8.5 or the TiDB Cloud plan and provider. Do not ask the customer for a region. Region is optional; when omitted, assess the minimum capability set across regions for that plan/provider. If any region is documented as incompatible, report the feature as incompatible and explain the conservative assumption. Use a volunteered region only for an explicit regional assessment. If the user has not selected a target, ask; do not treat the script's default as the user's choice.
 - Prepare a target configuration using [target-profiles.md](references/target-profiles.md). Cloud capabilities change over time. Verify applicable official documentation; retain unknown values when verification is unavailable.
 - Establish whether the export includes routines, events, and triggers. Pass `--export-scope` only when the user confirms completeness or the export command provides evidence. Finding one trigger does not establish that all triggers were exported.
 - Use `--ordered` only when the execution order of multiple files is known. Default directory sorting makes output stable; it does not establish import order.

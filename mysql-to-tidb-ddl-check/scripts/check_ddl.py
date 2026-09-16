@@ -21,6 +21,7 @@ BASE = 'https://docs.pingcap.com/tidb/v8.5/'
 SOURCES = {
     'compat': BASE + 'mysql-compatibility/',
     'cloud': 'https://docs.pingcap.com/tidbcloud/mysql-compatibility/',
+    'features': 'https://docs.pingcap.com/tidbcloud/features/',
     'fulltext': 'https://docs.pingcap.com/ai/vector-search-full-text-search-sql/',
     'auto': BASE + 'auto-increment/',
     'constraints': BASE + 'constraints/',
@@ -38,7 +39,7 @@ RULES = {
     'OBJ-002': (message('Trigger'), message('Identify the owning table and every write path. Move trigger logic into the application while preserving atomicity; do not simply delete it.'), ['compat', 'cloud']),
     'OBJ-003': (message('Scheduled event'), message('Move the event to an external scheduler, preserving its schedule, time zone, idempotency, and concurrency constraints.'), ['compat', 'cloud']),
     'OBJ-004': (message('External UDF'), message('Inspect visible dependencies and evaluate verified built-in functions or application code as replacements.'), ['compat', 'cloud']),
-    'IDX-001': (message('Full-text index'), message('Verify the Cloud plan, region, and actual full-text capability. Ordinary indexes or LIKE are not equivalent replacements.'), ['compat', 'fulltext']),
+    'IDX-001': (message('Full-text index'), message('Use the minimum regional capability by default; use verified target evidence only for an explicit regional assessment. Ordinary indexes or LIKE are not equivalent replacements.'), ['compat', 'fulltext', 'features']),
     'TYPE-001': (message('Spatial type or index'), message('Identify spatial query requirements before evaluating alternative services or representations. JSON is not automatically equivalent.'), ['compat']),
     'IDX-002': (message('Descending index'), message('Validate query plans and performance for queries using this index. DDL alone does not prove incorrect query results.'), ['compat']),
     'AUTO-001': (message('Auto-increment assumptions'), message('Check assumptions about gapless IDs, commit order, inferred batch IDs, and mixed explicit IDs. Evaluate compatibility mode for the workload; do not automatically switch to AUTO_RANDOM.'), ['auto']),
@@ -58,7 +59,7 @@ RULES = {
     'INPUT-002': (message('Unknown export scope'), message('Confirm that routines, events, and triggers were included, and inspect export errors. Missing definitions do not prove absence in the source database.'), ['dump']),
     'INPUT-003': (message('Incomplete structural assessment'), message('Complete or manually inspect this input. The tool does not execute SQL; uncovered items cannot be treated as passing.'), ['comments']),
     'INPUT-004': (message('Unknown object context'), message('Provide the default database, inherited settings, dependencies, or file execution order. Directory sorting does not establish execution order.'), ['dump']),
-    'INPUT-005': (message('Unknown target configuration'), message('Provide the Cloud plan, provider, region, and capability evidence. Recheck rolling product documentation when using the skill.'), ['cloud']),
+    'INPUT-005': (message('Unknown target configuration'), message('Provide the Cloud plan, provider, and capability evidence. Region is optional. Recheck rolling product documentation when using the skill.'), ['cloud']),
 }
 CHARSETS = {'ascii': 1, 'binary': 1, 'latin1': 1, 'gbk': 2, 'utf8': 3, 'utf8mb3': 3, 'utf8mb4': 4}
 COLLATIONS = set('ascii_bin binary gbk_bin gbk_chinese_ci latin1_bin utf8_bin utf8_general_ci utf8_unicode_ci utf8mb4_bin utf8mb4_general_ci utf8mb4_unicode_ci utf8mb4_0900_ai_ci utf8mb4_0900_bin'.split())
@@ -128,8 +129,16 @@ class Assessment:
         self.target_known = self.target['product'] == 'self-managed' and tv is not None and tv[:2] == (8, 5)
         if self.target['product'] == 'self-managed' and not self.target_known:
             self.add('INPUT-005', None, '', message('The target is not explicitly TiDB 8.5; version-dependent findings need confirmation.'))
-        if self.target['product'] == 'cloud' and not all(self.target.get(k) for k in ('plan', 'provider', 'region')):
-            self.add('INPUT-005', None, '', message('The Cloud plan, provider, or region is missing.'))
+        if self.target['product'] == 'cloud' and not all(self.target.get(k) for k in ('plan', 'provider')):
+            self.add('INPUT-005', None, '', message('The Cloud plan or provider is missing.'))
+
+    def minimum_regional_fulltext(self):
+        # Documentation snapshot: Starter is region-limited; the other listed
+        # plans do not offer FULLTEXT. Unknown plans retain uncertainty.
+        return (self.target['product'] == 'cloud'
+                and not self.target.get('region')
+                and self.target.get('plan', '').lower() in
+                ('starter', 'essential', 'premium', 'dedicated'))
 
     def mark(self, rule, status='checked'):
         rank = {'not-applicable': 0, 'checked': 1, 'needs-confirmation': 2, 'not-assessed': 3}
@@ -139,7 +148,7 @@ class Assessment:
     def add(self, rule, stmt, obj, impact, severity='medium', certainty='needs-confirmation', tokens=None):
         if certainty == 'confirmed' and not rule.startswith('INPUT-'):
             common_cloud = rule in ('OBJ-001', 'OBJ-002', 'OBJ-003', 'OBJ-004', 'TYPE-001', 'PART-001', 'ENGINE-001', 'EXPR-001')
-            fulltext_evidence = rule == 'IDX-001' and 'fulltext' in self.target.get('capabilities', {})
+            fulltext_evidence = rule == 'IDX-001' and (self.minimum_regional_fulltext() or 'fulltext' in self.target.get('capabilities', {}))
             if not self.target_known and not (self.target['product'] == 'cloud' and (common_cloud or fulltext_evidence)):
                 certainty = 'needs-confirmation'
             if stmt and stmt.guards:
@@ -256,10 +265,12 @@ class Assessment:
             if idx.kind == 'FULLTEXT':
                 self.mark('IDX-001')
                 capability = self.target.get('capabilities', {}).get('fulltext')
-                if self.target['product'] == 'self-managed' or capability is False:
+                if self.minimum_regional_fulltext():
+                    self.add('IDX-001', stmt, table.name, message('FULLTEXT is incompatible with the minimum regional capability set: it is not supported in every region for this Cloud plan. No region was specified.'), 'high', 'confirmed', idx.tokens)
+                elif self.target['product'] == 'self-managed' or capability is False:
                     self.add('IDX-001', stmt, table.name, message('The target lacks the required FULLTEXT index capability; accepting syntax does not mean the index is effective.'), 'high', 'confirmed', idx.tokens)
                 elif capability is not True or not all(self.target.get(k) for k in ('plan', 'provider', 'region')):
-                    self.add('IDX-001', stmt, table.name, message('Verify the Cloud plan, region, and current full-text availability.'), 'high', tokens=idx.tokens)
+                    self.add('IDX-001', stmt, table.name, message('Verify the Cloud plan and current full-text capability evidence.'), 'high', tokens=idx.tokens)
             if idx.kind == 'SPATIAL':
                 self.add('TYPE-001', stmt, table.name, message('The target does not support spatial indexes.'), 'blocker', 'confirmed', idx.tokens)
             if any(t.kw == 'DESC' for t in idx.tokens):

@@ -39,14 +39,15 @@ The script defaults to self-managed TiDB 8.5. Other or unknown versions can be s
 {
   "product": "cloud",
   "plan": "starter",
-  "provider": "aws",
-  "region": "us-west-2"
+  "provider": "aws"
 }
 ```
 
-Add `version` when the service version is known. Do not invent values to suppress findings. Plan, provider, and region are all required for product-specific decisions. Supplying only `product: cloud` still enables common object checks and produces INPUT-005.
+Add `version` when the service version is known. Do not invent values to suppress findings. Collect plan and provider; do not request a region. Omitting region is valid and does not produce INPUT-005. Use the minimum capability set across regions: known incompatibility in any region means incompatible under this policy, not merely unknown. Supplying only `product: cloud` still enables common object checks and produces INPUT-005.
 
-FULLTEXT availability depends on the plan, region, and current feature rollout. Include the following capability only after verifying the actual target:
+The 2026-09-16 documentation snapshot limits Starter FULLTEXT to selected regions; Essential and Dedicated list it as unavailable, and Premium as under development. With no region, the checker therefore reports IDX-001 as high/confirmed for these four plans, explaining the minimum regional capability assumption. It does so even when `fulltext: true` is supplied without a region. Unknown plans retain uncertainty; absence of evidence alone does not establish incompatibility. FULLTEXT is currently the only automated capability with a regional default. Apply the same policy to documented regional differences identified during manual review.
+
+If the customer voluntarily supplies a region and explicitly wants a regional assessment, include verified capability evidence as follows:
 
 ```json
 {
@@ -60,9 +61,9 @@ FULLTEXT availability depends on the plan, region, and current feature rollout. 
 }
 ```
 
-`fulltext: true` suppresses only the missing-or-unknown-capability finding. It does not prove equivalent tokenization, query results, or MySQL full-text semantics. False means the target is confirmed not to support the capability; omission means unknown. Even with true, missing plan, provider, or region still requires confirmation. The report preserves the complete target configuration for review.
+`fulltext: true` suppresses only the missing-or-unknown-capability finding. It does not prove equivalent tokenization, query results, or MySQL full-text semantics. For an explicit regional assessment, false means unsupported and omission means unknown; true requires plan, provider, and region. A region alone does not establish feature support. With no region, the minimum regional policy takes precedence for known plans. The report preserves the complete target configuration for review.
 
-Check the [Cloud feature matrix](https://docs.pingcap.com/tidbcloud/features/), [Cloud compatibility documentation](https://docs.pingcap.com/tidbcloud/mysql-compatibility/), and [full-text availability](https://docs.pingcap.com/ai/vector-search-full-text-search-sql/). The script does not access the network or treat a rolling documentation snapshot as a permanent capability matrix. Other version-dependent Cloud rules generally require confirmation. Common unsupported-object findings use the documented snapshot; verify current sources before delivering an assessment.
+Check the [Cloud feature matrix](https://docs.pingcap.com/tidbcloud/features/), [Cloud compatibility documentation](https://docs.pingcap.com/tidbcloud/mysql-compatibility/), and [full-text availability](https://docs.pingcap.com/ai/vector-search-full-text-search-sql/). The script does not access the network. Its conservative defaults are a dated snapshot; verify these sources when using the skill and update the snapshot and tests when availability changes. Other version-dependent Cloud rules generally require confirmation. Common unsupported-object findings use the documented snapshot; verify current sources before delivering an assessment.
 
 ## Source version and execution context
 

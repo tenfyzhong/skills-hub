@@ -74,6 +74,40 @@ DELIMITER ;
         self.assertFalse(self.findings('CREATE TABLE t(id INT AUTO_INCREMENT);' + alter, 'AUTO-002'))
         self.assertFalse(self.findings('ALTER TABLE t AUTO_INCREMENT=100;', 'AUTO-002'))
 
+    def test_cloud_region_is_optional_for_complete_basic_assessment(self):
+        target = dict(product='cloud', plan='essential', provider='aws')
+        report = self.report('CREATE TABLE t(id INT PRIMARY KEY);', target=target)
+        self.assertEqual(report['findings'], [])
+        self.assertTrue(report['summary']['complete'])
+        self.assertNotIn('region', report['target'])
+
+    def test_cloud_minimum_regional_fulltext_capability(self):
+        sql = 'CREATE TABLE t(body TEXT, FULLTEXT KEY ft(body));'
+        for plan in ('starter', 'essential', 'premium', 'dedicated'):
+            for capability in (None, True, False):
+                with self.subTest(plan=plan, capability=capability):
+                    target = dict(product='cloud', plan=plan, provider='aws')
+                    if capability is not None:
+                        target['capabilities'] = {'fulltext': capability}
+                    f = self.findings(sql, 'IDX-001', target=target)[0]
+                    self.assertEqual((f['severity'], f['certainty']), ('high', 'confirmed'))
+                    self.assertIn('minimum', f['impact'])
+
+    def test_unknown_cloud_plan_keeps_capability_uncertainty(self):
+        target = dict(product='cloud', plan='future-plan', provider='aws')
+        f = self.findings('CREATE TABLE t(body TEXT, FULLTEXT KEY ft(body));',
+                          'IDX-001', target=target)[0]
+        self.assertEqual(f['certainty'], 'needs-confirmation')
+
+    def test_minimum_regional_finding_is_localized(self):
+        sql = 'CREATE TABLE t(body TEXT, FULLTEXT KEY ft(body));'
+        target = dict(product='cloud', plan='starter', provider='aws')
+        for language, phrase in [('en', 'minimum'), ('zh', '最小'), ('ja', '最小')]:
+            with self.subTest(language=language):
+                f = self.findings(sql, 'IDX-001', target=target, language=language)[0]
+                self.assertEqual(f['certainty'], 'confirmed')
+                self.assertIn(phrase, f['impact'])
+
     def test_fulltext_target_profiles(self):
         sql = 'CREATE TABLE t(body TEXT, FULLTEXT KEY ft(body));'
         self.assertEqual(self.findings(sql, 'IDX-001')[0]['certainty'], 'confirmed')
