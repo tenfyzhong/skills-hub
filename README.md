@@ -9,11 +9,16 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 - deploy-ec2-aws - deploy and validate named EC2 nodes with Terraform, drift-safe updates, private networking, and stable public IPs
 - deploy-tidb-aws - deploy or manage TiDB clusters on AWS with Terraform and TiUP
 - implement-issue - implement a GitHub issue from an issue URL or number
+- mysql-to-tidb-ddl-check - assess exported MySQL DDL for TiDB 8.5 and TiDB Cloud, with located findings, coverage gaps, and remediation advice
 - new-issue - create or file a GitHub issue, bug report, or feature request from the conversation context
 - natural-writing - polish Chinese and English articles to sound less templated while preserving the author's voice and meaning
 - pr-review - review a GitHub or GitLab pull request from a PR URL or number
 - resume-agent-session - reconstruct compact working context from Codex, Pi, Oh My Pi, or Claude Code sessions
 - resolve-git-conflicts - resolve Git conflicts from merge, rebase, cherry-pick, or stash operations
+
+## Skill Designs
+
+- [MySQL to TiDB DDL checks](docs/mysql-to-tidb-ddl-check-design.md) - design rationale, rule catalog, and acceptance scenarios; see the [skill](mysql-to-tidb-ddl-check/SKILL.md) for usage and implemented coverage
 
 ## Install Skills (via vercel-labs/skills)
 
