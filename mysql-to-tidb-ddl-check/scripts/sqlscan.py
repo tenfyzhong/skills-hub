@@ -3,6 +3,8 @@
 from dataclasses import dataclass, field
 import re
 
+from i18n import message
+
 
 @dataclass(frozen=True)
 class Token:
@@ -58,16 +60,16 @@ def closing(tokens, start):
             depth -= 1
             if depth == 0:
                 return i
-    raise ValueError('Unclosed parenthesis')
+    raise ValueError(message('Unclosed parenthesis'))
 
 
 def identifier(tokens, start):
     if start >= len(tokens) or tokens[start].kind not in ('word', 'ident'):
-        raise ValueError('Missing recognizable object name')
+        raise ValueError(message('Missing recognizable object name'))
     parts, i = [tokens[start].value], start + 1
     if i < len(tokens) and tokens[i].value == '.':
         if i + 1 >= len(tokens) or tokens[i + 1].kind not in ('word', 'ident'):
-            raise ValueError('Incomplete qualified object name')
+            raise ValueError(message('Incomplete qualified object name'))
         parts.append(tokens[i + 1].value)
         i += 2
     return parts, i
@@ -118,7 +120,7 @@ class Scanner:
 
         def statement(error=''):
             return Statement(tokens.copy(), filename, guards.copy(), error or
-                             ('Unknown SQL mode; string or identifier boundaries cannot be confirmed' if uncertain else ''))
+                             (message('Unknown SQL mode; string or identifier boundaries cannot be confirmed') if uncertain else ''))
 
         while i < size:
             c = chars[i]
@@ -164,7 +166,7 @@ class Scanner:
                 if end < 0:
                     if not tokens:
                         tokens.append(Token('/*', 'symbol', line, line))
-                    yield statement('Unclosed comment')
+                    yield statement(message('Unclosed comment'))
                     return
                 if i + 2 < size and chars[i + 2] == '!':
                     match = re.match(r'/\*!(\d{5,6})?\s*', text[i:end])
@@ -210,7 +212,7 @@ class Scanner:
                     i += 1
                 tokens.append(Token(''.join(value), kind, start_line, line))
                 if not complete:
-                    yield statement('Unclosed string or identifier')
+                    yield statement(message('Unclosed string or identifier'))
                     return
                 continue
             if c.isalnum() or c in ('_', '$'):

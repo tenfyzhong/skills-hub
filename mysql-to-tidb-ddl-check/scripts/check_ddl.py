@@ -11,6 +11,7 @@ from pathlib import Path
 import re
 import sys
 
+from i18n import LANGUAGES, diagnostic, localize_report, message, message_join, validate_language
 from ddlparse import SPATIAL, column, option, parse_table
 from sqlscan import Scanner, Statement, closing, identifier, qualified, split_top
 
@@ -33,31 +34,31 @@ SOURCES = {
 }
 # Titles, remediation and evidence references are shared by JSON and Markdown.
 RULES = {
-    'OBJ-001': ('Stored procedure or stored function', 'Move the logic into an application service while preserving parameters, return values, transaction boundaries, and error handling. Trace body dependencies manually.', ['compat', 'cloud']),
-    'OBJ-002': ('Trigger', 'Identify the owning table and every write path. Move trigger logic into the application while preserving atomicity; do not simply delete it.', ['compat', 'cloud']),
-    'OBJ-003': ('Scheduled event', 'Move the event to an external scheduler, preserving its schedule, time zone, idempotency, and concurrency constraints.', ['compat', 'cloud']),
-    'OBJ-004': ('External UDF', 'Inspect visible dependencies and evaluate verified built-in functions or application code as replacements.', ['compat', 'cloud']),
-    'IDX-001': ('Full-text index', 'Verify the Cloud plan, region, and actual full-text capability. Ordinary indexes or LIKE are not equivalent replacements.', ['compat', 'fulltext']),
-    'TYPE-001': ('Spatial type or index', 'Identify spatial query requirements before evaluating alternative services or representations. JSON is not automatically equivalent.', ['compat']),
-    'IDX-002': ('Descending index', 'Validate query plans and performance for queries using this index. DDL alone does not prove incorrect query results.', ['compat']),
-    'AUTO-001': ('Auto-increment assumptions', 'Check assumptions about gapless IDs, commit order, inferred batch IDs, and mixed explicit IDs. Evaluate compatibility mode for the workload; do not automatically switch to AUTO_RANDOM.', ['auto']),
-    'AUTO-002': ('Adding auto-increment to an existing column', 'Verify the preceding schema and evaluate rebuilding the table and migrating data. Changing the starting value differs from adding the attribute.', ['auto']),
-    'FK-001': ('Foreign key structure and dependencies', 'Obtain parent table definitions, verify column types and parent indexes, and address specific restrictions. Do not remove constraints by default.', ['constraints', 'fk']),
-    'CHECK-001': ('CHECK enforcement conditions', 'Verify the source version, ENFORCED status, and target tidb_enable_check_constraint setting before planning enforcement and data validation.', ['constraints', 'check']),
-    'CHECK-002': ('Inline CHECK in ALTER', 'Separate column changes and constraint operations into supported forms, and validate existing data.', ['constraints']),
-    'CHAR-001': ('Character set or collation', 'Verify exact names, inheritance, and the target collation framework. Validate sorting, comparisons, and uniqueness before replacing them.', ['char']),
-    'PART-001': ('Subpartitioning', 'Evaluate single-level partitioning or a regular table, then validate query and operational effects separately.', ['compat']),
-    'LIMIT-001': ('Schema limits', 'Verify target settings and byte calculations before adjusting definitions or supported limits. DDL cannot determine actual row size.', ['limits']),
-    'VIEW-001': ('View write assumptions', 'Check whether the application writes through views. A view definition does not prove that view DML exists.', ['views']),
-    'ENGINE-001': ('Source storage engine semantics', 'Check dependencies on source engine behavior. Removing ENGINE does not prove semantic equivalence.', ['compat']),
-    'EXPR-001': ('DDL expression', 'Verify target support for the function or expression. Do not propose an equivalent rewrite without validating its semantics.', ['compat']),
-    'CONTEXT-001': ('Privileges or cross-database dependencies', 'Verify target accounts, privileges, and cross-database objects. Do not automatically remove DEFINER or switch to INVOKER.', ['views']),
-    'CONTEXT-002': ('Dump session context', 'Verify support and effects of each session statement. Do not unconditionally remove SET statements or import wrappers.', ['compat']),
-    'INPUT-001': ('Insufficient source version evidence', 'Provide the complete source MySQL server version. The client version is not a substitute.', ['dump']),
-    'INPUT-002': ('Unknown export scope', 'Confirm that routines, events, and triggers were included, and inspect export errors. Missing definitions do not prove absence in the source database.', ['dump']),
-    'INPUT-003': ('Incomplete structural assessment', 'Complete or manually inspect this input. The tool does not execute SQL; uncovered items cannot be treated as passing.', ['comments']),
-    'INPUT-004': ('Unknown object context', 'Provide the default database, inherited settings, dependencies, or file execution order. Directory sorting does not establish execution order.', ['dump']),
-    'INPUT-005': ('Unknown target configuration', 'Provide the Cloud plan, provider, region, and capability evidence. Recheck rolling product documentation when using the skill.', ['cloud']),
+    'OBJ-001': (message('Stored procedure or stored function'), message('Move the logic into an application service while preserving parameters, return values, transaction boundaries, and error handling. Trace body dependencies manually.'), ['compat', 'cloud']),
+    'OBJ-002': (message('Trigger'), message('Identify the owning table and every write path. Move trigger logic into the application while preserving atomicity; do not simply delete it.'), ['compat', 'cloud']),
+    'OBJ-003': (message('Scheduled event'), message('Move the event to an external scheduler, preserving its schedule, time zone, idempotency, and concurrency constraints.'), ['compat', 'cloud']),
+    'OBJ-004': (message('External UDF'), message('Inspect visible dependencies and evaluate verified built-in functions or application code as replacements.'), ['compat', 'cloud']),
+    'IDX-001': (message('Full-text index'), message('Verify the Cloud plan, region, and actual full-text capability. Ordinary indexes or LIKE are not equivalent replacements.'), ['compat', 'fulltext']),
+    'TYPE-001': (message('Spatial type or index'), message('Identify spatial query requirements before evaluating alternative services or representations. JSON is not automatically equivalent.'), ['compat']),
+    'IDX-002': (message('Descending index'), message('Validate query plans and performance for queries using this index. DDL alone does not prove incorrect query results.'), ['compat']),
+    'AUTO-001': (message('Auto-increment assumptions'), message('Check assumptions about gapless IDs, commit order, inferred batch IDs, and mixed explicit IDs. Evaluate compatibility mode for the workload; do not automatically switch to AUTO_RANDOM.'), ['auto']),
+    'AUTO-002': (message('Adding auto-increment to an existing column'), message('Verify the preceding schema and evaluate rebuilding the table and migrating data. Changing the starting value differs from adding the attribute.'), ['auto']),
+    'FK-001': (message('Foreign key structure and dependencies'), message('Obtain parent table definitions, verify column types and parent indexes, and address specific restrictions. Do not remove constraints by default.'), ['constraints', 'fk']),
+    'CHECK-001': (message('CHECK enforcement conditions'), message('Verify the source version, ENFORCED status, and target tidb_enable_check_constraint setting before planning enforcement and data validation.'), ['constraints', 'check']),
+    'CHECK-002': (message('Inline CHECK in ALTER'), message('Separate column changes and constraint operations into supported forms, and validate existing data.'), ['constraints']),
+    'CHAR-001': (message('Character set or collation'), message('Verify exact names, inheritance, and the target collation framework. Validate sorting, comparisons, and uniqueness before replacing them.'), ['char']),
+    'PART-001': (message('Subpartitioning'), message('Evaluate single-level partitioning or a regular table, then validate query and operational effects separately.'), ['compat']),
+    'LIMIT-001': (message('Schema limits'), message('Verify target settings and byte calculations before adjusting definitions or supported limits. DDL cannot determine actual row size.'), ['limits']),
+    'VIEW-001': (message('View write assumptions'), message('Check whether the application writes through views. A view definition does not prove that view DML exists.'), ['views']),
+    'ENGINE-001': (message('Source storage engine semantics'), message('Check dependencies on source engine behavior. Removing ENGINE does not prove semantic equivalence.'), ['compat']),
+    'EXPR-001': (message('DDL expression'), message('Verify target support for the function or expression. Do not propose an equivalent rewrite without validating its semantics.'), ['compat']),
+    'CONTEXT-001': (message('Privileges or cross-database dependencies'), message('Verify target accounts, privileges, and cross-database objects. Do not automatically remove DEFINER or switch to INVOKER.'), ['views']),
+    'CONTEXT-002': (message('Dump session context'), message('Verify support and effects of each session statement. Do not unconditionally remove SET statements or import wrappers.'), ['compat']),
+    'INPUT-001': (message('Insufficient source version evidence'), message('Provide the complete source MySQL server version. The client version is not a substitute.'), ['dump']),
+    'INPUT-002': (message('Unknown export scope'), message('Confirm that routines, events, and triggers were included, and inspect export errors. Missing definitions do not prove absence in the source database.'), ['dump']),
+    'INPUT-003': (message('Incomplete structural assessment'), message('Complete or manually inspect this input. The tool does not execute SQL; uncovered items cannot be treated as passing.'), ['comments']),
+    'INPUT-004': (message('Unknown object context'), message('Provide the default database, inherited settings, dependencies, or file execution order. Directory sorting does not establish execution order.'), ['dump']),
+    'INPUT-005': (message('Unknown target configuration'), message('Provide the Cloud plan, provider, region, and capability evidence. Recheck rolling product documentation when using the skill.'), ['cloud']),
 }
 CHARSETS = {'ascii': 1, 'binary': 1, 'latin1': 1, 'gbk': 2, 'utf8': 3, 'utf8mb3': 3, 'utf8mb4': 4}
 COLLATIONS = set('ascii_bin binary gbk_bin gbk_chinese_ci latin1_bin utf8_bin utf8_general_ci utf8_unicode_ci utf8mb4_bin utf8mb4_general_ci utf8mb4_unicode_ci utf8mb4_0900_ai_ci utf8mb4_0900_bin'.split())
@@ -118,17 +119,17 @@ class Assessment:
         self.statement_count = 0
         self.coverage = {key: 'not-applicable' for key in RULES}
         if not self.version or self.version[:2] not in ((5, 7), (8, 0), (8, 4)):
-            self.add('INPUT-001', None, '', 'The source version is unknown, conflicting, or outside the 5.7/8.0/8.4 coverage range.', certainty='not-assessed')
+            self.add('INPUT-001', None, '', message('The source version is unknown, conflicting, or outside the 5.7/8.0/8.4 coverage range.'), certainty='not-assessed')
         if not {'routines', 'events', 'triggers'}.issubset(set(export_scope or [])):
-            self.add('INPUT-002', None, '', 'The files do not establish complete stored-program export coverage.', certainty='not-assessed')
+            self.add('INPUT-002', None, '', message('The files do not establish complete stored-program export coverage.'), certainty='not-assessed')
         if len(sources) > 1 and not ordered:
-            self.add('INPUT-004', None, '', 'No execution order was declared for multiple files; each file has an independent session context.')
+            self.add('INPUT-004', None, '', message('No execution order was declared for multiple files; each file has an independent session context.'))
         tv = version_tuple(self.target.get('version'))
         self.target_known = self.target['product'] == 'self-managed' and tv is not None and tv[:2] == (8, 5)
         if self.target['product'] == 'self-managed' and not self.target_known:
-            self.add('INPUT-005', None, '', 'The target is not explicitly TiDB 8.5; version-dependent findings need confirmation.')
+            self.add('INPUT-005', None, '', message('The target is not explicitly TiDB 8.5; version-dependent findings need confirmation.'))
         if self.target['product'] == 'cloud' and not all(self.target.get(k) for k in ('plan', 'provider', 'region')):
-            self.add('INPUT-005', None, '', 'The Cloud plan, provider, or region is missing.')
+            self.add('INPUT-005', None, '', message('The Cloud plan, provider, or region is missing.'))
 
     def mark(self, rule, status='checked'):
         rank = {'not-applicable': 0, 'checked': 1, 'needs-confirmation': 2, 'not-assessed': 3}
@@ -145,7 +146,7 @@ class Assessment:
                 source_number = self.version[0] * 10000 + self.version[1] * 100 + self.version[2] if self.version else 0
                 if any(g > source_number or g >= 90000 for g in stmt.guards):
                     certainty = 'needs-confirmation'
-                    impact += ' The version condition of an executable comment needs verification.'
+                    impact += message(' The version condition of an executable comment needs verification.')
             if certainty != 'confirmed' and severity == 'blocker':
                 severity = 'high'
         use = tokens if tokens else (stmt.tokens if stmt else [])
@@ -172,11 +173,11 @@ class Assessment:
                 continue
             name = token.value.upper()
             if name in UNSUPPORTED_FUNCTIONS:
-                self.add('EXPR-001', stmt, obj, f'The expression uses the unsupported function {name}.', 'blocker', 'confirmed', [token])
+                self.add('EXPR-001', stmt, obj, message('The expression uses the unsupported function {0}.', name), 'blocker', 'confirmed', [token])
             elif name not in KNOWN_FUNCTIONS or (context == 'AS' and name == 'NULLIF'):
-                self.add('EXPR-001', stmt, obj, f'Function {name} is outside the verified function subset.', tokens=[token])
+                self.add('EXPR-001', stmt, obj, message('Function {0} is outside the verified function subset.', name), tokens=[token])
         if context == 'DEFAULT' and len(self.findings) == before:
-            self.add('EXPR-001', stmt, obj, 'Expression defaults depend on the column type and specific expression; verify target support.', tokens=tokens)
+            self.add('EXPR-001', stmt, obj, message('Expression defaults depend on the column type and specific expression; verify target support.'), tokens=tokens)
 
     def checks(self, stmt, obj, checks):
         enabled = self.target.get('settings', {}).get('tidb_enable_check_constraint')
@@ -188,9 +189,9 @@ class Assessment:
                 continue
             if enabled is True and self.version and self.version >= (8, 0, 16):
                 continue
-            reason = 'Verify whether CHECK is enforced on both the source and the target.'
+            reason = message('Verify whether CHECK is enforced on both the source and the target.')
             if self.version and self.version < (8, 0, 16):
-                reason += ' The source predates 8.0.16; do not assume the constraint was enforced.'
+                reason += message(' The source predates 8.0.16; do not assume the constraint was enforced.')
             mismatch = not not_enforced and self.version is not None and (
                 (enabled is False and self.version >= (8, 0, 16)) or
                 (enabled is True and self.version < (8, 0, 16)))
@@ -199,16 +200,16 @@ class Assessment:
     def charset(self, stmt, obj, charset, collation, tokens):
         self.mark('CHAR-001')
         if charset and charset not in CHARSETS:
-            self.add('CHAR-001', stmt, obj, f'Character set {charset} is not in the target support list.', 'blocker', 'confirmed', tokens)
+            self.add('CHAR-001', stmt, obj, message('Character set {0} is not in the target support list.', charset), 'blocker', 'confirmed', tokens)
         if collation and collation not in COLLATIONS:
-            self.add('CHAR-001', stmt, obj, f'Collation {collation} is not in the verified support list.', tokens=tokens)
+            self.add('CHAR-001', stmt, obj, message('Collation {0} is not in the verified support list.', collation), tokens=tokens)
         if charset and not collation:
-            self.add('CHAR-001', stmt, obj, 'An explicit character set has no collation; target default comparison semantics might differ.', tokens=tokens)
+            self.add('CHAR-001', stmt, obj, message('An explicit character set has no collation; target default comparison semantics might differ.'), tokens=tokens)
         if charset == 'latin1':
-            self.add('CHAR-001', stmt, obj, 'Validate latin1 behavior against actual data; a supported name does not guarantee identical byte semantics.', 'high', tokens=tokens)
+            self.add('CHAR-001', stmt, obj, message('Validate latin1 behavior against actual data; a supported name does not guarantee identical byte semantics.'), 'high', tokens=tokens)
         if collation and not collation.endswith('_bin') and collation != 'binary':
             if self.target.get('settings', {}).get('new_collations_enabled_on_first_bootstrap') is False:
-                self.add('CHAR-001', stmt, obj, 'The target disables the new collation framework; verify comparison semantics.', 'high', tokens=tokens)
+                self.add('CHAR-001', stmt, obj, message('The target disables the new collation framework; verify comparison semantics.'), 'high', tokens=tokens)
 
     def limit(self, table, actual, default, config, label, tokens):
         self.mark('LIMIT-001')
@@ -216,7 +217,7 @@ class Assessment:
         bound = settings.get(config, default) if config else default
         if actual > bound:
             confirmed = config is None or config in settings
-            self.add('LIMIT-001', table.statement, table.name, f'{label}={actual}; target limit or documented default={bound}.',
+            self.add('LIMIT-001', table.statement, table.name, message('{0}={1}; target limit or documented default={2}.', label, actual, bound),
                      'blocker' if confirmed else 'medium', 'confirmed' if confirmed else 'needs-confirmation', tokens)
 
     def table_rules(self, table):
@@ -224,18 +225,18 @@ class Assessment:
         for group, error in table.unknown:
             self.gap(stmt, error, group)
         if not table.columns:
-            self.gap(stmt, 'No columns were recognized; the table structure cannot be fully assessed.')
+            self.gap(stmt, message('No columns were recognized; the table structure cannot be fully assessed.'))
         for col in table.columns.values():
             obj = table.name + '.' + col.name
             if col.auto:
-                self.add('AUTO-001', stmt, obj, 'DDL establishes an auto-increment attribute but cannot confirm application assumptions about IDs.', 'info', tokens=col.tokens)
+                self.add('AUTO-001', stmt, obj, message('DDL establishes an auto-increment attribute but cannot confirm application assumptions about IDs.'), 'info', tokens=col.tokens)
             if col.type in SPATIAL:
-                self.add('TYPE-001', stmt, obj, 'The target does not support this spatial type.', 'blocker', 'confirmed', col.tokens)
+                self.add('TYPE-001', stmt, obj, message('The target does not support this spatial type.'), 'blocker', 'confirmed', col.tokens)
             if col.type in STRING_TYPES:
                 charset = col.charset or (col.collation.split('_')[0] if col.collation else table.charset)
                 collation = col.collation or (None if col.charset else table.collation)
                 if not charset and not collation:
-                    self.add('INPUT-004', stmt, obj, 'The effective character set and collation of this string column are unknown.', tokens=col.tokens)
+                    self.add('INPUT-004', stmt, obj, message('The effective character set and collation of this string column are unknown.'), tokens=col.tokens)
                 else:
                     self.charset(stmt, obj, charset, collation, col.tokens)
             for i, t in enumerate(col.tokens):
@@ -256,19 +257,19 @@ class Assessment:
                 self.mark('IDX-001')
                 capability = self.target.get('capabilities', {}).get('fulltext')
                 if self.target['product'] == 'self-managed' or capability is False:
-                    self.add('IDX-001', stmt, table.name, 'The target lacks the required FULLTEXT index capability; accepting syntax does not mean the index is effective.', 'high', 'confirmed', idx.tokens)
+                    self.add('IDX-001', stmt, table.name, message('The target lacks the required FULLTEXT index capability; accepting syntax does not mean the index is effective.'), 'high', 'confirmed', idx.tokens)
                 elif capability is not True or not all(self.target.get(k) for k in ('plan', 'provider', 'region')):
-                    self.add('IDX-001', stmt, table.name, 'Verify the Cloud plan, region, and current full-text availability.', 'high', tokens=idx.tokens)
+                    self.add('IDX-001', stmt, table.name, message('Verify the Cloud plan, region, and current full-text availability.'), 'high', tokens=idx.tokens)
             if idx.kind == 'SPATIAL':
-                self.add('TYPE-001', stmt, table.name, 'The target does not support spatial indexes.', 'blocker', 'confirmed', idx.tokens)
+                self.add('TYPE-001', stmt, table.name, message('The target does not support spatial indexes.'), 'blocker', 'confirmed', idx.tokens)
             if any(t.kw == 'DESC' for t in idx.tokens):
-                self.add('IDX-002', stmt, table.name, 'The target implements DESC index attributes differently.', 'medium', 'confirmed', idx.tokens)
-            self.limit(table, len(idx.columns), 16, None, 'Index column count', idx.tokens)
+                self.add('IDX-002', stmt, table.name, message('The target implements DESC index attributes differently.'), 'medium', 'confirmed', idx.tokens)
+            self.limit(table, len(idx.columns), 16, None, message('Index column count'), idx.tokens)
             total, known = 0, True
             for name, prefix in idx.columns:
                 col = table.columns.get(name)
                 if not col:
-                    self.gap(stmt, 'The index references an unrecognized column.', idx.tokens)
+                    self.gap(stmt, message('The index references an unrecognized column.'), idx.tokens)
                     known = False
                     continue
                 if col.type in ('CHAR', 'VARCHAR', 'BINARY', 'VARBINARY', 'TEXT', 'BLOB', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT'):
@@ -284,28 +285,28 @@ class Assessment:
                 else:
                     known = False
             if known:
-                self.limit(table, total, 3072, 'max-index-length', 'Index length in bytes', idx.tokens)
+                self.limit(table, total, 3072, 'max-index-length', message('Index length in bytes'), idx.tokens)
             else:
-                self.add('LIMIT-001', stmt, table.name, 'The exact byte length of this index is outside the current calculation coverage.', tokens=idx.tokens)
-        self.limit(table, len(table.columns), 1017, 'table-column-count-limit', 'Column count', stmt.tokens)
+                self.add('LIMIT-001', stmt, table.name, message('The exact byte length of this index is outside the current calculation coverage.'), tokens=idx.tokens)
+        self.limit(table, len(table.columns), 1017, 'table-column-count-limit', message('Column count'), stmt.tokens)
         index_columns = [[c[0] for c in idx.columns] for idx in table.indexes]
         for fk in sorted(table.foreign_keys, key=lambda fk: -len(fk.columns)):
             if not any(cols[:len(fk.columns)] == fk.columns for cols in index_columns):
                 index_columns.append(fk.columns)
-        self.limit(table, len(index_columns), 64, 'index-limit', 'Index count (including indexes required by foreign keys)', stmt.tokens)
+        self.limit(table, len(index_columns), 64, 'index-limit', message('Index count (including indexes required by foreign keys)'), stmt.tokens)
         partitions = option(table.options, ['PARTITIONS'])
         if partitions and partitions.isdigit():
-            self.limit(table, int(partitions), 8192, None, 'Partition count', table.options)
+            self.limit(table, int(partitions), 8192, None, message('Partition count'), table.options)
         else:
             # Explicit partition definitions (PARTITION BY is not a definition).
             count = sum(t.kw == 'PARTITION' and i + 1 < len(table.options) and table.options[i + 1].kw != 'BY'
                         for i, t in enumerate(table.options))
-            self.limit(table, count, 8192, None, 'Partition count', table.options)
+            self.limit(table, count, 8192, None, message('Partition count'), table.options)
         if any(t.kw == 'SUBPARTITION' for t in table.options):
-            self.add('PART-001', stmt, table.name, 'The DDL uses subpartitioning.', 'blocker', 'confirmed', table.options)
+            self.add('PART-001', stmt, table.name, message('The DDL uses subpartitioning.'), 'blocker', 'confirmed', table.options)
         engine = option(table.options, ['ENGINE'])
         if engine and engine != 'innodb':
-            self.add('ENGINE-001', stmt, table.name, f'The source engine is {engine}; verify engine-specific semantics.', tokens=table.options)
+            self.add('ENGINE-001', stmt, table.name, message('The source engine is {0}; verify engine-specific semantics.', engine), tokens=table.options)
         allowed_options = set('ENGINE DEFAULT CHARSET CHARACTER SET COLLATE AUTO_INCREMENT COMMENT ROW_FORMAT PARTITION'.split())
         # Parse common scalar options; partition expressions are separately scoped.
         i = 0
@@ -314,16 +315,16 @@ class Assessment:
             if t.kw == 'PARTITION':
                 following = table.options[i + 1:]
                 if len(following) < 2 or following[0].kw != 'BY' or following[1].kw not in ('HASH', 'KEY', 'RANGE', 'LIST', 'LINEAR'):
-                    self.gap(stmt, 'Partition definition outside parser coverage.', table.options[i:])
+                    self.gap(stmt, message('Partition definition outside parser coverage.'), table.options[i:])
                 break
             if t.kw == 'DEFAULT':
                 i += 1
                 continue
             if t.kw not in allowed_options:
-                self.gap(stmt, 'Table option outside parser coverage.', table.options[i:])
+                self.gap(stmt, message('Table option outside parser coverage.'), table.options[i:])
                 break
             if t.kw == 'ROW_FORMAT':
-                self.add('CONTEXT-002', stmt, table.name, 'Physical storage semantics of ROW_FORMAT have not been checked for equivalence.', tokens=table.options[i:])
+                self.add('CONTEXT-002', stmt, table.name, message('Physical storage semantics of ROW_FORMAT have not been checked for equivalence.'), tokens=table.options[i:])
             i += 2 if t.kw == 'CHARACTER' else 1
             if i < len(table.options) and table.options[i].value == '=':
                 i += 1
@@ -337,18 +338,18 @@ class Assessment:
                 if parent and not self.ordered and fk.parent.startswith('?.') and parent.statement.file != table.statement.file:
                     parent = None
                 if not parent or table.unknown or parent.unknown:
-                    self.add('FK-001', table.statement, table.name, 'The parent table or relevant column definitions are incomplete; constraint validity cannot be established.', tokens=fk.tokens)
+                    self.add('FK-001', table.statement, table.name, message('The parent table or relevant column definitions are incomplete; constraint validity cannot be established.'), tokens=fk.tokens)
                     continue
                 problems = []
                 if table.name == parent.name and any(a == b for a, b in zip(fk.columns, fk.parent_columns)):
-                    problems.append('A foreign key column directly references itself')
+                    problems.append(message('A foreign key column directly references itself'))
                 if table.temporary or parent.temporary:
-                    problems.append('The foreign key involves a temporary table')
+                    problems.append(message('The foreign key involves a temporary table'))
                 if any(t.kw == 'PARTITION' for t in table.options + parent.options):
-                    problems.append('The foreign key involves a partitioned table')
+                    problems.append(message('The foreign key involves a partitioned table'))
                 if not any([c[0] for c in idx.columns[:len(fk.parent_columns)]] == fk.parent_columns and
                            all(c[1] is None for c in idx.columns[:len(fk.parent_columns)]) for idx in parent.indexes):
-                    problems.append('The parent lacks a matching index prefix of full columns')
+                    problems.append(message('The parent lacks a matching index prefix of full columns'))
                 missing = False
                 for left, right in zip(fk.columns, fk.parent_columns):
                     a, b = table.columns.get(left), parent.columns.get(right)
@@ -356,13 +357,13 @@ class Assessment:
                         missing = True
                         continue
                     if a.signature != b.signature:
-                        problems.append('Parent and child column types, lengths, or signedness differ')
+                        problems.append(message('Parent and child column types, lengths, or signedness differ'))
                     if a.virtual or b.virtual or any('TEXT' in c.type or 'BLOB' in c.type for c in (a, b)):
-                        problems.append('The foreign key involves a virtual generated column or TEXT/BLOB')
+                        problems.append(message('The foreign key involves a virtual generated column or TEXT/BLOB'))
                     if any(t.kw == 'AS' for t in a.tokens) and not a.virtual:
                         actions = [t.kw for t in fk.tokens]
                         if 'CASCADE' in actions or any(actions[i:i + 2] in (['SET', 'NULL'], ['SET', 'DEFAULT']) for i in range(len(actions))):
-                            problems.append('A stored generated foreign key column uses an unsupported reference action')
+                            problems.append(message('A stored generated foreign key column uses an unsupported reference action'))
                     if a.type in STRING_TYPES:
                         for attr in ('charset', 'collation'):
                             av = getattr(a, attr) or getattr(table, attr)
@@ -370,13 +371,13 @@ class Assessment:
                             if av is None or bv is None:
                                 missing = True
                             elif av != bv:
-                                problems.append('Parent and child character sets or collations differ')
+                                problems.append(message('Parent and child character sets or collations differ'))
                 if len(fk.columns) != len(fk.parent_columns):
-                    problems.append('Parent and child column counts differ')
+                    problems.append(message('Parent and child column counts differ'))
                 if problems:
-                    self.add('FK-001', table.statement, table.name, '; '.join(sorted(set(problems))) + '. This restriction might also apply to the source MySQL database.', 'blocker', 'confirmed', fk.tokens)
+                    self.add('FK-001', table.statement, table.name, message_join('; ', sorted(set(problems))) + message('. This restriction might also apply to the source MySQL database.'), 'blocker', 'confirmed', fk.tokens)
                 elif missing:
-                    self.add('FK-001', table.statement, table.name, 'Parent or child column definitions or effective character sets are incomplete.', tokens=fk.tokens)
+                    self.add('FK-001', table.statement, table.name, message('Parent or child column definitions or effective character sets are incomplete.'), tokens=fk.tokens)
 
     def alter(self, stmt, database):
         tokens = stmt.tokens
@@ -386,13 +387,13 @@ class Assessment:
         baseline_table = table if table and (self.ordered or table.statement.file == stmt.file) and not table.unknown else None
         for action in split_top(tokens[i:]):
             if not action:
-                self.gap(stmt, 'Empty ALTER operation.')
+                self.gap(stmt, message('Empty ALTER operation.'))
                 continue
             first = action[0].kw
             if first in ('ADD', 'CHANGE') and any(t.kw == 'CHECK' for t in action):
                 inline = first == 'CHANGE' or (len(action) > 1 and action[1].kw not in ('CONSTRAINT', 'CHECK'))
                 if inline:
-                    self.add('CHECK-002', stmt, name, 'Inline CHECK in ADD COLUMN is ignored.' if first == 'ADD' else 'Adding inline CHECK through CHANGE is unsupported.',
+                    self.add('CHECK-002', stmt, name, message('Inline CHECK in ADD COLUMN is ignored.') if first == 'ADD' else message('Adding inline CHECK through CHANGE is unsupported.'),
                              'high' if first == 'ADD' else 'blocker', 'confirmed', action)
             if first in ('MODIFY', 'CHANGE'):
                 j = 2 if len(action) > 1 and action[1].kw == 'COLUMN' else 1
@@ -403,19 +404,19 @@ class Assessment:
                     col = column(action[j:])
                     baseline = baseline_table.columns.get(old) if baseline_table else None
                     if col.auto and (not baseline or not baseline.auto):
-                        self.add('AUTO-002', stmt, name + '.' + col.name, 'Adding auto-increment to an existing column.' if baseline else 'The column baseline is missing; adding auto-increment cannot be confirmed.',
+                        self.add('AUTO-002', stmt, name + '.' + col.name, message('Adding auto-increment to an existing column.') if baseline else message('The column baseline is missing; adding auto-increment cannot be confirmed.'),
                                  'blocker' if baseline else 'medium', 'confirmed' if baseline else 'needs-confirmation', action)
                     if table:
                         table.columns.pop(old, None)
                         table.columns[col.name] = col
                 except ValueError as exc:
-                    self.gap(stmt, str(exc), action)
+                    self.gap(stmt, diagnostic(exc), action)
             if first == 'AUTO_INCREMENT' and len(action) >= 3 and action[1].value == '=' and action[2].kind == 'number':
                 continue
             # This first release only assesses the two listed ALTER rules.
-            self.gap(stmt, 'Only auto-increment attributes and inline CHECK were assessed for ALTER; other change semantics are not covered.', action)
+            self.gap(stmt, message('Only auto-increment attributes and inline CHECK were assessed for ALTER; other change semantics are not covered.'), action)
             if table:
-                table.unknown.append((action, 'The schema after ALTER was not fully reconstructed'))
+                table.unknown.append((action, message('The schema after ALTER was not fully reconstructed')))
 
     def statement(self, stmt, database):
         tokens = stmt.tokens
@@ -427,14 +428,14 @@ class Assessment:
             if t.kind == 'symbol':
                 depth += (t.value == '(') - (t.value == ')')
                 if depth < 0:
-                    raise ValueError('Unexpected closing parenthesis')
+                    raise ValueError(message('Unexpected closing parenthesis'))
         if depth:
-            raise ValueError('Unclosed parenthesis')
+            raise ValueError(message('Unclosed parenthesis'))
         first = tokens[0].kw
         if first == 'USE':
             names, end = identifier(tokens, 1)
             if end != len(tokens) or len(names) != 1:
-                raise ValueError('Unrecognized USE statement')
+                raise ValueError(message('Unrecognized USE statement'))
             return names[0]
         if first == 'SET':
             names = []
@@ -452,13 +453,13 @@ class Assessment:
                 self.charset(stmt, '', tokens[2].value.lower() if len(tokens) > 2 else None, option(tokens, ['COLLATE']), tokens)
             self.mark('CONTEXT-002')
             if not known:
-                self.add('CONTEXT-002', stmt, '', 'The session statement is outside the verified dump wrapper subset.', certainty='not-assessed')
+                self.add('CONTEXT-002', stmt, '', message('The session statement is outside the verified dump wrapper subset.'), certainty='not-assessed')
             return database
         if first in ('LOCK', 'UNLOCK'):
-            self.add('CONTEXT-002', stmt, '', 'Verify target settings and semantics for lock wrapper statements.')
+            self.add('CONTEXT-002', stmt, '', message('Verify target settings and semantics for lock wrapper statements.'))
             return database
         if first in ('INSERT', 'REPLACE', 'UPDATE', 'DELETE'):
-            self.gap(Statement(tokens[:1], stmt.file), 'The input contains DML; data values and application behavior were not assessed.')
+            self.gap(Statement(tokens[:1], stmt.file), message('The input contains DML; data values and application behavior were not assessed.'))
             return database
         if first == 'ALTER' and len(tokens) > 1 and tokens[1].kw == 'TABLE':
             self.alter(stmt, database)
@@ -468,18 +469,18 @@ class Assessment:
             for group in split_top(tokens[i:]):
                 names, end = identifier(group, 0)
                 if end != len(group):
-                    raise ValueError('DROP form outside parser coverage')
+                    raise ValueError(message('DROP form outside parser coverage'))
                 name = qualified(names, database)
                 self.tables.pop(name, None)
                 self.objects.pop(('relation', name), None)
             return database
         if first != 'CREATE':
-            self.gap(stmt, 'SQL or client instruction outside parser coverage.')
+            self.gap(stmt, message('SQL or client instruction outside parser coverage.'))
             return database
         kinds = {'TABLE', 'DATABASE', 'SCHEMA', 'VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'EVENT'}
         kind_index = next((i for i, t in enumerate(tokens[1:], 1) if t.kw in kinds), None)
         if kind_index is None:
-            self.gap(stmt, 'CREATE object outside parser coverage.')
+            self.gap(stmt, message('CREATE object outside parser coverage.'))
             return database
         kind = tokens[kind_index].kw
         i = kind_index + 1
@@ -495,24 +496,24 @@ class Assessment:
         if kind in ('PROCEDURE', 'FUNCTION', 'TRIGGER', 'EVENT'):
             udf = kind == 'FUNCTION' and any(t.kw == 'SONAME' for t in tokens[end:])
             rule = 'OBJ-004' if udf else {'PROCEDURE': 'OBJ-001', 'FUNCTION': 'OBJ-001', 'TRIGGER': 'OBJ-002', 'EVENT': 'OBJ-003'}[kind]
-            impact = 'The target does not support this object definition. Its body and complete business dependencies were not semantically validated.'
+            impact = message('The target does not support this object definition. Its body and complete business dependencies were not semantically validated.')
             evidence_end = end
             if kind == 'TRIGGER':
                 on = next((j for j in range(end, len(tokens)) if tokens[j].kw == 'ON'), None)
                 if on is not None:
                     trigger_table, evidence_end = identifier(tokens, on + 1)
-                    impact += ' Trigger condition: ' + ' '.join(t.value for t in tokens[end:on]) + '; owning table: ' + qualified(trigger_table, database) + '.'
+                    impact += message(' Trigger condition: {0}; owning table: {1}.', ' '.join(t.value for t in tokens[end:on]), qualified(trigger_table, database))
             self.add(rule, stmt, name, impact, 'blocker', 'confirmed', tokens[:evidence_end])
             self.objects[(kind.lower(), name)] = {'name': name, 'kind': kind.lower(), 'file': stmt.file, 'line': stmt.line}
             return database
         if kind == 'TABLE':
             table = parse_table(stmt, database, self.defaults)
             if name in self.tables:
-                self.add('INPUT-004', stmt, name, 'Duplicate table definitions; replacement behavior or execution order cannot be assumed.')
-                table.unknown.append((tokens[:end], 'Duplicate table definitions leave the schema uncertain'))
+                self.add('INPUT-004', stmt, name, message('Duplicate table definitions; replacement behavior or execution order cannot be assumed.'))
+                table.unknown.append((tokens[:end], message('Duplicate table definitions leave the schema uncertain')))
             source_number = self.version[0] * 10000 + self.version[1] * 100 + self.version[2] if self.version else 0
             if any(g > source_number for g in stmt.guards):
-                table.unknown.append((tokens[:end], 'A conditional table definition is not a confirmed dependency baseline'))
+                table.unknown.append((tokens[:end], message('A conditional table definition is not a confirmed dependency baseline')))
             self.tables[name] = table
             self.objects[('relation', name)] = {'name': name, 'kind': 'table', 'file': stmt.file, 'line': stmt.line}
             self.table_rules(table)
@@ -520,15 +521,15 @@ class Assessment:
         if kind == 'VIEW':
             self.tables.pop(name, None)
             self.objects[('relation', name)] = {'name': name, 'kind': 'view', 'file': stmt.file, 'line': stmt.line}
-            self.add('VIEW-001', stmt, name, 'Target views are not writable; DDL cannot establish whether the application relies on view writes.', 'info', tokens=tokens[:end])
+            self.add('VIEW-001', stmt, name, message('Target views are not writable; DDL cannot establish whether the application relies on view writes.'), 'info', tokens=tokens[:end])
             if any(t.kw in ('DEFINER', 'SECURITY') for t in tokens[:kind_index]):
-                self.add('CONTEXT-001', stmt, name, 'The view has an explicit security context; target accounts and privileges were not verified.', tokens=tokens[:end])
+                self.add('CONTEXT-001', stmt, name, message('The view has an explicit security context; target accounts and privileges were not verified.'), tokens=tokens[:end])
             select = next((i for i, t in enumerate(tokens) if t.kw == 'SELECT'), None)
             if select is None:
-                self.gap(stmt, 'The view lacks a recognizable SELECT.')
+                self.gap(stmt, message('The view lacks a recognizable SELECT.'))
             else:
                 self.expressions(stmt, name, tokens[select + 1:])
-                self.add('CONTEXT-001', stmt, name, 'Only functions were scanned in the view query and dependencies; verify full query semantics and cross-database privileges manually.', tokens=tokens[:end])
+                self.add('CONTEXT-001', stmt, name, message('Only functions were scanned in the view query and dependencies; verify full query semantics and cross-database privileges manually.'), tokens=tokens[:end])
             return database
         return database
 
@@ -542,14 +543,14 @@ class Assessment:
             for stmt in scanner.statements(text, filename):
                 self.statement_count += 1
                 if any(g > (source_number or 0) or g >= 90000 for g in stmt.guards):
-                    self.add('INPUT-004', stmt, '', 'The executable comment version condition is unconfirmed; the definition is assessed conditionally.')
+                    self.add('INPUT-004', stmt, '', message('The executable comment version condition is unconfirmed; the definition is assessed conditionally.'))
                 try:
                     database = self.statement(stmt, database)
                 except (ValueError, IndexError, StopIteration) as exc:
-                    self.gap(stmt, str(exc) or 'Incomplete DDL structure.')
+                    self.gap(stmt, diagnostic(exc))
         self.foreign_keys()
         if not self.statement_count:
-            self.gap(None, 'No SQL statements are available for assessment.')
+            self.gap(None, message('No SQL statements are available for assessment.'))
         return self.result()
 
     def result(self):
@@ -565,17 +566,18 @@ class Assessment:
                 'inventory': sorted(self.objects.values(), key=lambda o: (o['name'], o['kind'])),
                 'coverage': [{'rule_id': k, 'status': v} for k, v in self.coverage.items()],
                 'findings': self.findings,
-                'limitations': ['Static structural checks do not validate SQL syntax; checked refers only to the implemented rule subset.',
-                                'Application SQL, transactions, actual data, performance, and the migration pipeline were not assessed.',
-                                'Verify Cloud capabilities against current product documentation; an offline snapshot does not establish current availability.']}
+                'limitations': [message('Static structural checks do not validate SQL syntax; checked refers only to the implemented rule subset.'),
+                                message('Application SQL, transactions, actual data, performance, and the migration pipeline were not assessed.'),
+                                message('Verify Cloud capabilities against current product documentation; an offline snapshot does not establish current availability.')]}
 
 
-def analyze(sources, source_version=None, target=None, export_scope=None, ordered=False):
+def analyze(sources, source_version=None, target=None, export_scope=None, ordered=False, language='en'):
     """Analyze filename -> SQL text; insertion order is meaningful only with ordered=True."""
+    validate_language(language)
     assessment = Assessment(sources, source_version, target, export_scope, ordered)
     if not sources or not any(text.strip() for text in sources.values()):
-        assessment.add('INPUT-003', None, '', 'No SQL input is available for assessment.', certainty='not-assessed')
-    return assessment.run()
+        assessment.add('INPUT-003', None, '', message('No SQL input is available for assessment.'), certainty='not-assessed')
+    return localize_report(assessment.run(), language)
 
 
 def md_escape(value):
@@ -583,30 +585,42 @@ def md_escape(value):
 
 
 def render_markdown(report):
+    language = validate_language(report.get('language', 'en'))
+
+    def text(template, *values):
+        return message(template, *values).render(language)
+
     summary = report['summary']
-    lines = ['# MySQL to TiDB DDL Assessment', '',
-             f"Assessment completeness: {'complete within rule coverage' if summary['complete'] else 'incomplete; input or assessment gaps remain'}.",
-             f"Source version: {md_escape(report['source']['version'] or 'unknown')}; target: {md_escape(json.dumps(report['target'], ensure_ascii=False))}.",
-             f"Files: {len(report['files'])}; statements: {summary['statements']}; final objects: {summary['objects']}.", '',
-             '## Input files', '']
+    completeness = text('complete within rule coverage' if summary['complete'] else
+                        'incomplete; input or assessment gaps remain')
+    lines = ['# ' + text('MySQL to TiDB DDL Assessment'), '',
+             text('Assessment completeness: {0}.', completeness),
+             text('Source version: {0}; target: {1}.',
+                  md_escape(report['source']['version'] or text('unknown')),
+                  md_escape(json.dumps(report['target'], ensure_ascii=False))),
+             text('Files: {0}; statements: {1}; final objects: {2}.',
+                  len(report['files']), summary['statements'], summary['objects']), '',
+             '## ' + text('Input files'), '']
     lines.extend('- ' + md_escape(name) for name in report['files'])
-    lines.extend(['', '## Findings', ''])
+    lines.extend(['', '## ' + text('Findings'), ''])
     if not report['findings']:
-        lines.append('No blockers were found within the parsed DDL and applicable rule coverage.')
+        lines.append(text('No blockers were found within the parsed DDL and applicable rule coverage.'))
     priority = {'blocker': 0, 'high': 1, 'medium': 2, 'info': 3}
     findings = sorted(report['findings'], key=lambda f: (f['rule_id'].startswith('INPUT-'), priority[f['severity']]))
     for f in findings:
         loc = f['location']
         lines.extend([f"### {f['rule_id']} · {f['title']}", '',
-                      f"{f['severity']} / {f['certainty']} · {md_escape(f['object'] or 'Input scope')} · {md_escape(loc['file'])}:{loc['line_start']}", '',
-                      'Evidence: ' + md_escape(f['evidence'] or 'not provided'), '',
-                      'Impact: ' + md_escape(f['impact']), '', 'Recommendation: ' + f['recommendation'], '',
-                      'References: ' + ', '.join(f'[Official documentation {i + 1}]({url})' for i, url in enumerate(f['source_urls'])), ''])
-    lines.extend(['## Coverage and limitations', '', '| Rule | Status |', '| --- | --- |'])
-    lines.extend(f"| {c['rule_id']} | {c['status']} |" for c in report['coverage'])
+                      f"{text(f['severity'])} / {text(f['certainty'])} · {md_escape(f['object'] or text('Input scope'))} · {md_escape(loc['file'])}:{loc['line_start']}", '',
+                      text('Evidence: ') + md_escape(f['evidence'] or text('not provided')), '',
+                      text('Impact: ') + md_escape(f['impact']), '',
+                      text('Recommendation: ') + f['recommendation'], '',
+                      text('References: ') + ', '.join(f"[{text('Official documentation {0}', i + 1)}]({url})" for i, url in enumerate(f['source_urls'])), ''])
+    lines.extend(['## ' + text('Coverage and limitations'), '',
+                  '| ' + text('Rule') + ' | ' + text('Status') + ' |', '| --- | --- |'])
+    lines.extend(f"| {c['rule_id']} | {text(c['status'])} |" for c in report['coverage'])
     lines.append('')
     lines.extend('- ' + item for item in report['limitations'])
-    lines.extend(['', f"Rule sources checked on: {report['sources_checked_on']}.", ''])
+    lines.extend(['', text('Rule sources checked on: {0}.', report['sources_checked_on']), ''])
     return '\n'.join(lines)
 
 
@@ -614,6 +628,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('inputs', nargs='+', type=Path)
     parser.add_argument('--source-version')
+    parser.add_argument('--language', choices=LANGUAGES, default='en', help='Report language: en (English), zh (Chinese), ja (Japanese); default: en')
     parser.add_argument('--target-config', type=Path, help='Target JSON; default: self-managed TiDB 8.5')
     parser.add_argument('--export-scope', default='', help='Comma-separated routines,events,triggers confirmed exported')
     parser.add_argument('--ordered', action='store_true', help='Explicit input files are in execution order; directories cannot be ordered')
@@ -646,10 +661,10 @@ def main(argv=None):
                 failures.append(str(path))
         assessment = Assessment(sources, args.source_version, target, args.export_scope.split(','), args.ordered)
         for name in failures:
-            assessment.gap(Statement([], name), 'The file cannot be read or is not valid UTF-8; provide a correctly encoded export.')
+            assessment.gap(Statement([], name), message('The file cannot be read or is not valid UTF-8; provide a correctly encoded export.'))
         if not any(text.strip() for text in sources.values()):
-            assessment.gap(None, 'No SQL content is available for assessment.')
-        report = assessment.run()
+            assessment.gap(None, message('No SQL content is available for assessment.'))
+        report = localize_report(assessment.run(), args.language)
         output = json.dumps(report, ensure_ascii=False, indent=2) + '\n' if args.format == 'json' else render_markdown(report)
         if args.output:
             with args.output.open('x', encoding='utf-8') as stream:

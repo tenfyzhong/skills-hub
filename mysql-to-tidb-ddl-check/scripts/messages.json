@@ -1,0 +1,750 @@
+{
+  "Stored procedure or stored function": {
+    "zh": "存储过程或存储函数",
+    "ja": "ストアドプロシージャまたはストアド関数"
+  },
+  "Trigger": {
+    "zh": "触发器",
+    "ja": "トリガー"
+  },
+  "Scheduled event": {
+    "zh": "定时事件",
+    "ja": "スケジュールイベント"
+  },
+  "External UDF": {
+    "zh": "外部 UDF",
+    "ja": "外部 UDF"
+  },
+  "Full-text index": {
+    "zh": "全文索引",
+    "ja": "全文検索インデックス"
+  },
+  "Spatial type or index": {
+    "zh": "空间类型或索引",
+    "ja": "空間型または空間インデックス"
+  },
+  "Descending index": {
+    "zh": "降序索引",
+    "ja": "降順インデックス"
+  },
+  "Auto-increment assumptions": {
+    "zh": "自增值假设",
+    "ja": "自動採番に関する前提"
+  },
+  "Adding auto-increment to an existing column": {
+    "zh": "为现有列添加自增属性",
+    "ja": "既存列への自動採番属性の追加"
+  },
+  "Foreign key structure and dependencies": {
+    "zh": "外键结构与依赖",
+    "ja": "外部キーの構造と依存関係"
+  },
+  "CHECK enforcement conditions": {
+    "zh": "CHECK 生效条件",
+    "ja": "CHECK の適用条件"
+  },
+  "Inline CHECK in ALTER": {
+    "zh": "ALTER 中的内联 CHECK",
+    "ja": "ALTER 内のインライン CHECK"
+  },
+  "Character set or collation": {
+    "zh": "字符集或排序规则",
+    "ja": "文字セットまたは照合順序"
+  },
+  "Subpartitioning": {
+    "zh": "子分区",
+    "ja": "サブパーティション"
+  },
+  "Schema limits": {
+    "zh": "表结构限制",
+    "ja": "スキーマの制限"
+  },
+  "View write assumptions": {
+    "zh": "视图写入假设",
+    "ja": "ビューへの書き込みに関する前提"
+  },
+  "Source storage engine semantics": {
+    "zh": "源存储引擎语义",
+    "ja": "移行元ストレージエンジンのセマンティクス"
+  },
+  "DDL expression": {
+    "zh": "DDL 表达式",
+    "ja": "DDL 式"
+  },
+  "Privileges or cross-database dependencies": {
+    "zh": "权限或跨库依赖",
+    "ja": "権限またはデータベース間の依存関係"
+  },
+  "Dump session context": {
+    "zh": "导出文件的会话上下文",
+    "ja": "ダンプのセッションコンテキスト"
+  },
+  "Insufficient source version evidence": {
+    "zh": "源版本证据不足",
+    "ja": "移行元バージョンの根拠不足"
+  },
+  "Unknown export scope": {
+    "zh": "导出范围未知",
+    "ja": "エクスポート範囲が不明"
+  },
+  "Incomplete structural assessment": {
+    "zh": "结构评估不完整",
+    "ja": "構造評価が不完全"
+  },
+  "Unknown object context": {
+    "zh": "对象上下文未知",
+    "ja": "オブジェクトのコンテキストが不明"
+  },
+  "Unknown target configuration": {
+    "zh": "目标配置未知",
+    "ja": "移行先の構成が不明"
+  },
+  "Move the logic into an application service while preserving parameters, return values, transaction boundaries, and error handling. Trace body dependencies manually.": {
+    "zh": "将逻辑迁移到应用服务，保留参数、返回值、事务边界和错误处理。手动追踪程序体的依赖。",
+    "ja": "パラメーター、戻り値、トランザクション境界、エラー処理を維持してロジックをアプリケーションサービスへ移してください。本体の依存関係は手動で確認してください。"
+  },
+  "Identify the owning table and every write path. Move trigger logic into the application while preserving atomicity; do not simply delete it.": {
+    "zh": "识别所属表和所有写入路径。在保留原子性的前提下将触发器逻辑迁移到应用，不要直接删除。",
+    "ja": "対象テーブルとすべての書き込み経路を確認してください。原子性を維持してトリガーのロジックをアプリケーションへ移し、単純に削除しないでください。"
+  },
+  "Move the event to an external scheduler, preserving its schedule, time zone, idempotency, and concurrency constraints.": {
+    "zh": "将事件迁移到外部调度器，保留调度计划、时区、幂等性和并发约束。",
+    "ja": "実行スケジュール、タイムゾーン、冪等性、同時実行の制約を維持して、イベントを外部スケジューラーへ移してください。"
+  },
+  "Inspect visible dependencies and evaluate verified built-in functions or application code as replacements.": {
+    "zh": "检查可见依赖，评估已验证的内置函数或应用代码作为替代。",
+    "ja": "確認できる依存関係を調べ、検証済みの組み込み関数やアプリケーションコードへの置き換えを検討してください。"
+  },
+  "Verify the Cloud plan, region, and actual full-text capability. Ordinary indexes or LIKE are not equivalent replacements.": {
+    "zh": "核实 Cloud 套餐、区域和实际全文检索能力。普通索引或 LIKE 不是等价替代。",
+    "ja": "Cloud のプラン、リージョン、実際の全文検索機能を確認してください。通常のインデックスや LIKE は同等の代替ではありません。"
+  },
+  "Identify spatial query requirements before evaluating alternative services or representations. JSON is not automatically equivalent.": {
+    "zh": "先明确空间查询需求，再评估替代服务或数据表示方式。JSON 并不天然等价。",
+    "ja": "空間クエリの要件を明確にしてから、代替サービスやデータ表現を検討してください。JSON が同等とは限りません。"
+  },
+  "Validate query plans and performance for queries using this index. DDL alone does not prove incorrect query results.": {
+    "zh": "验证使用该索引的查询计划和性能。仅凭 DDL 不能证明查询结果错误。",
+    "ja": "このインデックスを使うクエリの実行計画と性能を検証してください。DDL だけではクエリ結果の誤りは判断できません。"
+  },
+  "Check assumptions about gapless IDs, commit order, inferred batch IDs, and mixed explicit IDs. Evaluate compatibility mode for the workload; do not automatically switch to AUTO_RANDOM.": {
+    "zh": "检查连续 ID、提交顺序、批量 ID 推算和显式 ID 混用等假设。按工作负载评估兼容模式，不要自动切换到 AUTO_RANDOM。",
+    "ja": "欠番のない ID、コミット順序、バッチ ID の推定、明示的な ID の混在に関する前提を確認してください。ワークロードに応じて互換モードを評価し、AUTO_RANDOM へ自動的に切り替えないでください。"
+  },
+  "Verify the preceding schema and evaluate rebuilding the table and migrating data. Changing the starting value differs from adding the attribute.": {
+    "zh": "核实先前的表结构，评估重建表和迁移数据。修改起始值与添加自增属性不同。",
+    "ja": "変更前のスキーマを確認し、テーブルの再構築とデータ移行を検討してください。開始値の変更と属性の追加は異なります。"
+  },
+  "Obtain parent table definitions, verify column types and parent indexes, and address specific restrictions. Do not remove constraints by default.": {
+    "zh": "补充父表定义，核实列类型和父表索引，并处理具体限制。不要默认删除约束。",
+    "ja": "参照先テーブルの定義を取得し、列型とインデックスを確認して個別の制限に対処してください。制約の削除を既定の対応にしないでください。"
+  },
+  "Verify the source version, ENFORCED status, and target tidb_enable_check_constraint setting before planning enforcement and data validation.": {
+    "zh": "先核实源版本、ENFORCED 状态和目标 tidb_enable_check_constraint 设置，再规划约束生效与数据验证。",
+    "ja": "移行元バージョン、ENFORCED 状態、移行先の tidb_enable_check_constraint 設定を確認してから、制約の適用とデータ検証を計画してください。"
+  },
+  "Separate column changes and constraint operations into supported forms, and validate existing data.": {
+    "zh": "将列变更与约束操作拆成受支持的形式，并验证现有数据。",
+    "ja": "列の変更と制約操作をサポートされる形式に分離し、既存データを検証してください。"
+  },
+  "Verify exact names, inheritance, and the target collation framework. Validate sorting, comparisons, and uniqueness before replacing them.": {
+    "zh": "核实准确名称、继承关系和目标排序规则框架。替换前验证排序、比较和唯一性。",
+    "ja": "正確な名称、継承関係、移行先の照合順序フレームワークを確認してください。置き換える前に並べ替え、比較、一意性を検証してください。"
+  },
+  "Evaluate single-level partitioning or a regular table, then validate query and operational effects separately.": {
+    "zh": "评估单层分区或普通表，再分别验证查询与运维影响。",
+    "ja": "単一レベルのパーティションまたは通常のテーブルを検討し、クエリと運用への影響をそれぞれ検証してください。"
+  },
+  "Verify target settings and byte calculations before adjusting definitions or supported limits. DDL cannot determine actual row size.": {
+    "zh": "调整定义或受支持的限制前，核实目标设置和字节计算。DDL 无法确定实际行大小。",
+    "ja": "定義やサポートされる上限を変更する前に、移行先の設定とバイト数の計算を確認してください。DDL では実際の行サイズは判断できません。"
+  },
+  "Check whether the application writes through views. A view definition does not prove that view DML exists.": {
+    "zh": "检查应用是否通过视图写入。视图定义不能证明存在视图 DML。",
+    "ja": "アプリケーションがビュー経由で書き込むか確認してください。ビューの定義だけではビューへの DML の存在は判断できません。"
+  },
+  "Check dependencies on source engine behavior. Removing ENGINE does not prove semantic equivalence.": {
+    "zh": "检查对源引擎行为的依赖。移除 ENGINE 不能证明语义等价。",
+    "ja": "移行元エンジンの動作への依存を確認してください。ENGINE の削除だけではセマンティクスの同等性は保証されません。"
+  },
+  "Verify target support for the function or expression. Do not propose an equivalent rewrite without validating its semantics.": {
+    "zh": "核实目标对函数或表达式的支持。未验证语义前，不要建议所谓的等价改写。",
+    "ja": "移行先が関数や式をサポートするか確認してください。セマンティクスを検証せずに同等の書き換えを提案しないでください。"
+  },
+  "Verify target accounts, privileges, and cross-database objects. Do not automatically remove DEFINER or switch to INVOKER.": {
+    "zh": "核实目标账户、权限和跨库对象。不要自动移除 DEFINER 或切换到 INVOKER。",
+    "ja": "移行先のアカウント、権限、データベース間のオブジェクトを確認してください。DEFINER の削除や INVOKER への切り替えを自動的に行わないでください。"
+  },
+  "Verify support and effects of each session statement. Do not unconditionally remove SET statements or import wrappers.": {
+    "zh": "核实每条会话语句的支持情况与影响。不要无条件移除 SET 语句或导入包装语句。",
+    "ja": "各セッション文のサポート状況と影響を確認してください。SET 文やインポート用の補助文を無条件に削除しないでください。"
+  },
+  "Provide the complete source MySQL server version. The client version is not a substitute.": {
+    "zh": "提供完整的源 MySQL 服务端版本。客户端版本不能替代服务端版本。",
+    "ja": "移行元 MySQL サーバーの完全なバージョンを指定してください。クライアントのバージョンでは代用できません。"
+  },
+  "Confirm that routines, events, and triggers were included, and inspect export errors. Missing definitions do not prove absence in the source database.": {
+    "zh": "确认导出包含存储程序、事件和触发器，并检查导出错误。缺少定义不代表源数据库中不存在。",
+    "ja": "ルーチン、イベント、トリガーが含まれていることを確認し、エクスポートエラーを調べてください。定義がないことは移行元に存在しない証拠にはなりません。"
+  },
+  "Complete or manually inspect this input. The tool does not execute SQL; uncovered items cannot be treated as passing.": {
+    "zh": "补全或手动检查此输入。工具不执行 SQL，未覆盖的项目不能视为通过。",
+    "ja": "入力を補完するか手動で確認してください。このツールは SQL を実行せず、未評価の項目を合格とはみなしません。"
+  },
+  "Provide the default database, inherited settings, dependencies, or file execution order. Directory sorting does not establish execution order.": {
+    "zh": "补充默认数据库、继承设置、依赖或文件执行顺序。目录排序不代表执行顺序。",
+    "ja": "既定のデータベース、継承設定、依存関係、またはファイルの実行順序を指定してください。ディレクトリの並び順は実行順序の根拠にはなりません。"
+  },
+  "Provide the Cloud plan, provider, region, and capability evidence. Recheck rolling product documentation when using the skill.": {
+    "zh": "提供 Cloud 套餐、云厂商、区域和功能证据。使用 skill 时重新核对持续更新的产品文档。",
+    "ja": "Cloud のプラン、プロバイダー、リージョン、機能の根拠を指定してください。スキルの使用時に更新される製品ドキュメントを再確認してください。"
+  },
+  "The source version is unknown, conflicting, or outside the 5.7/8.0/8.4 coverage range.": {
+    "zh": "源版本未知、存在冲突，或不在 5.7/8.0/8.4 覆盖范围内。",
+    "ja": "移行元バージョンが不明、矛盾している、または対象の 5.7/8.0/8.4 の範囲外です。"
+  },
+  "The files do not establish complete stored-program export coverage.": {
+    "zh": "无法根据文件确认存储程序导出完整性。",
+    "ja": "ファイルからストアドプログラムのエクスポートが完全か確認できません。"
+  },
+  "No execution order was declared for multiple files; each file has an independent session context.": {
+    "zh": "未声明多个文件的执行顺序；每个文件使用独立的会话上下文。",
+    "ja": "複数ファイルの実行順序が指定されていないため、各ファイルは独立したセッションコンテキストを使用します。"
+  },
+  "The target is not explicitly TiDB 8.5; version-dependent findings need confirmation.": {
+    "zh": "目标未明确为 TiDB 8.5；与版本相关的发现需要确认。",
+    "ja": "移行先が TiDB 8.5 と明示されていないため、バージョンに依存する指摘事項は確認が必要です。"
+  },
+  "The Cloud plan, provider, or region is missing.": {
+    "zh": "缺少 Cloud 套餐、云厂商或区域。",
+    "ja": "Cloud のプラン、プロバイダー、またはリージョンが未指定です。"
+  },
+  " The version condition of an executable comment needs verification.": {
+    "zh": " 需要核实可执行注释的版本条件。",
+    "ja": " 実行可能コメントのバージョン条件を確認する必要があります。"
+  },
+  "The expression uses the unsupported function {0}.": {
+    "zh": "表达式使用了不受支持的函数 {0}。",
+    "ja": "式でサポートされない関数 {0} を使用しています。"
+  },
+  "Function {0} is outside the verified function subset.": {
+    "zh": "函数 {0} 不在已验证的函数子集内。",
+    "ja": "関数 {0} は検証済みの関数の範囲外です。"
+  },
+  "Expression defaults depend on the column type and specific expression; verify target support.": {
+    "zh": "表达式默认值取决于列类型和具体表达式；请核实目标支持情况。",
+    "ja": "式によるデフォルト値は列型と具体的な式に依存するため、移行先でのサポートを確認してください。"
+  },
+  "Verify whether CHECK is enforced on both the source and the target.": {
+    "zh": "核实 CHECK 在源端与目标端是否生效。",
+    "ja": "移行元と移行先の両方で CHECK が適用されるか確認してください。"
+  },
+  " The source predates 8.0.16; do not assume the constraint was enforced.": {
+    "zh": " 源版本早于 8.0.16；不要假定约束已生效。",
+    "ja": " 移行元は 8.0.16 より前のため、制約が適用されていたと仮定しないでください。"
+  },
+  "Character set {0} is not in the target support list.": {
+    "zh": "字符集 {0} 不在目标支持列表内。",
+    "ja": "文字セット {0} は移行先のサポート一覧に含まれていません。"
+  },
+  "Collation {0} is not in the verified support list.": {
+    "zh": "排序规则 {0} 不在已验证的支持列表内。",
+    "ja": "照合順序 {0} は検証済みのサポート一覧に含まれていません。"
+  },
+  "An explicit character set has no collation; target default comparison semantics might differ.": {
+    "zh": "显式字符集未指定排序规则；目标默认比较语义可能不同。",
+    "ja": "文字セットが明示されていますが照合順序がないため、移行先の既定の比較セマンティクスが異なる可能性があります。"
+  },
+  "Validate latin1 behavior against actual data; a supported name does not guarantee identical byte semantics.": {
+    "zh": "使用实际数据验证 latin1 行为；名称受支持不保证字节语义一致。",
+    "ja": "実際のデータで latin1 の動作を検証してください。名称がサポートされてもバイト単位のセマンティクスが同じとは限りません。"
+  },
+  "The target disables the new collation framework; verify comparison semantics.": {
+    "zh": "目标禁用了新排序规则框架；请核实比较语义。",
+    "ja": "移行先で新しい照合順序フレームワークが無効になっています。比較セマンティクスを確認してください。"
+  },
+  "{0}={1}; target limit or documented default={2}.": {
+    "zh": "{0}={1}；目标限制或文档默认值={2}。",
+    "ja": "{0}={1}、移行先の上限またはドキュメントの既定値={2}。"
+  },
+  "Column count": {
+    "zh": "列数",
+    "ja": "列数"
+  },
+  "Index column count": {
+    "zh": "索引列数",
+    "ja": "インデックスの列数"
+  },
+  "Index length in bytes": {
+    "zh": "索引字节长度",
+    "ja": "インデックスのバイト数"
+  },
+  "Index count (including indexes required by foreign keys)": {
+    "zh": "索引数（含外键所需索引）",
+    "ja": "インデックス数（外部キーに必要なものを含む）"
+  },
+  "No columns were recognized; the table structure cannot be fully assessed.": {
+    "zh": "未识别到列；无法完整评估表结构。",
+    "ja": "列を認識できないため、テーブル構造を完全には評価できません。"
+  },
+  "DDL establishes an auto-increment attribute but cannot confirm application assumptions about IDs.": {
+    "zh": "DDL 可确认自增属性，但无法确认应用对 ID 的假设。",
+    "ja": "DDL で自動採番属性は確認できますが、ID に関するアプリケーションの前提は確認できません。"
+  },
+  "The target does not support this spatial type.": {
+    "zh": "目标不支持此空间类型。",
+    "ja": "移行先はこの空間型をサポートしていません。"
+  },
+  "The effective character set and collation of this string column are unknown.": {
+    "zh": "此字符串列实际生效的字符集和排序规则未知。",
+    "ja": "この文字列列に適用される文字セットと照合順序が不明です。"
+  },
+  "The target lacks the required FULLTEXT index capability; accepting syntax does not mean the index is effective.": {
+    "zh": "目标缺少所需的 FULLTEXT 索引能力；接受语法不代表索引生效。",
+    "ja": "移行先には必要な FULLTEXT インデックス機能がありません。構文を受け付けてもインデックスが有効とは限りません。"
+  },
+  "Verify the Cloud plan, region, and current full-text availability.": {
+    "zh": "核实 Cloud 套餐、区域和当前全文检索可用性。",
+    "ja": "Cloud のプラン、リージョン、現在の全文検索の利用可否を確認してください。"
+  },
+  "The target does not support spatial indexes.": {
+    "zh": "目标不支持空间索引。",
+    "ja": "移行先は空間インデックスをサポートしていません。"
+  },
+  "The target implements DESC index attributes differently.": {
+    "zh": "目标对 DESC 索引属性的实现不同。",
+    "ja": "移行先では DESC インデックス属性の実装が異なります。"
+  },
+  "The index references an unrecognized column.": {
+    "zh": "索引引用了未识别的列。",
+    "ja": "インデックスが認識できない列を参照しています。"
+  },
+  "The exact byte length of this index is outside the current calculation coverage.": {
+    "zh": "此索引的准确字节长度超出当前计算覆盖范围。",
+    "ja": "このインデックスの正確なバイト数は現在の計算対象外です。"
+  },
+  "The DDL uses subpartitioning.": {
+    "zh": "DDL 使用了子分区。",
+    "ja": "DDL でサブパーティションを使用しています。"
+  },
+  "The source engine is {0}; verify engine-specific semantics.": {
+    "zh": "源引擎为 {0}；请核实引擎特有语义。",
+    "ja": "移行元エンジンは {0} です。エンジン固有のセマンティクスを確認してください。"
+  },
+  "Partition definition outside parser coverage.": {
+    "zh": "分区定义超出解析器覆盖范围。",
+    "ja": "パーティション定義がパーサーの対象範囲外です。"
+  },
+  "Table option outside parser coverage.": {
+    "zh": "表选项超出解析器覆盖范围。",
+    "ja": "テーブルオプションがパーサーの対象範囲外です。"
+  },
+  "Physical storage semantics of ROW_FORMAT have not been checked for equivalence.": {
+    "zh": "尚未验证 ROW_FORMAT 物理存储语义的等价性。",
+    "ja": "ROW_FORMAT の物理ストレージのセマンティクスが同等かは未検証です。"
+  },
+  "The parent table or relevant column definitions are incomplete; constraint validity cannot be established.": {
+    "zh": "父表或相关列定义不完整；无法确定约束有效性。",
+    "ja": "参照先テーブルまたは関連する列定義が不完全なため、制約の有効性を判断できません。"
+  },
+  "A foreign key column directly references itself": {
+    "zh": "外键列直接引用自身",
+    "ja": "外部キー列が自分自身を直接参照しています"
+  },
+  "The foreign key involves a temporary table": {
+    "zh": "外键涉及临时表",
+    "ja": "外部キーに一時テーブルが含まれています"
+  },
+  "The foreign key involves a partitioned table": {
+    "zh": "外键涉及分区表",
+    "ja": "外部キーにパーティションテーブルが含まれています"
+  },
+  "The parent lacks a matching index prefix of full columns": {
+    "zh": "父表缺少匹配的完整列索引前缀",
+    "ja": "参照先に、列全体からなる一致したインデックス接頭部がありません"
+  },
+  "Parent and child column types, lengths, or signedness differ": {
+    "zh": "父子列的类型、长度或符号属性不同",
+    "ja": "参照元と参照先の列の型、長さ、または符号属性が異なります"
+  },
+  "The foreign key involves a virtual generated column or TEXT/BLOB": {
+    "zh": "外键涉及虚拟生成列或 TEXT/BLOB",
+    "ja": "外部キーに仮想生成列または TEXT/BLOB が含まれています"
+  },
+  "A stored generated foreign key column uses an unsupported reference action": {
+    "zh": "存储生成外键列使用了不受支持的引用动作",
+    "ja": "格納された生成列の外部キーがサポートされない参照動作を使用しています"
+  },
+  "Parent and child character sets or collations differ": {
+    "zh": "父子列的字符集或排序规则不同",
+    "ja": "参照元と参照先の文字セットまたは照合順序が異なります"
+  },
+  "Parent and child column counts differ": {
+    "zh": "父子列数量不同",
+    "ja": "参照元と参照先の列数が異なります"
+  },
+  ". This restriction might also apply to the source MySQL database.": {
+    "zh": "。此限制也可能适用于源 MySQL 数据库。",
+    "ja": "。この制限は移行元の MySQL にも適用される可能性があります。"
+  },
+  "Parent or child column definitions or effective character sets are incomplete.": {
+    "zh": "父子列定义或实际生效的字符集不完整。",
+    "ja": "参照元または参照先の列定義、または適用される文字セットの情報が不完全です。"
+  },
+  "Empty ALTER operation.": {
+    "zh": "ALTER 操作为空。",
+    "ja": "ALTER 操作が空です。"
+  },
+  "Inline CHECK in ADD COLUMN is ignored.": {
+    "zh": "ADD COLUMN 中的内联 CHECK 被忽略。",
+    "ja": "ADD COLUMN 内のインライン CHECK は無視されます。"
+  },
+  "Adding inline CHECK through CHANGE is unsupported.": {
+    "zh": "不支持通过 CHANGE 添加内联 CHECK。",
+    "ja": "CHANGE によるインライン CHECK の追加はサポートされていません。"
+  },
+  "Adding auto-increment to an existing column.": {
+    "zh": "为现有列添加自增属性。",
+    "ja": "既存列に自動採番属性を追加しています。"
+  },
+  "The column baseline is missing; adding auto-increment cannot be confirmed.": {
+    "zh": "缺少列的基线定义；无法确认是否新增自增属性。",
+    "ja": "列の変更前の定義がないため、自動採番属性の追加か確認できません。"
+  },
+  "Only auto-increment attributes and inline CHECK were assessed for ALTER; other change semantics are not covered.": {
+    "zh": "ALTER 仅评估自增属性与内联 CHECK；未覆盖其他变更语义。",
+    "ja": "ALTER では自動採番属性とインライン CHECK のみを評価し、その他の変更のセマンティクスは対象外です。"
+  },
+  "The schema after ALTER was not fully reconstructed": {
+    "zh": "未完整重建 ALTER 后的表结构",
+    "ja": "ALTER 後のスキーマは完全には再構築されていません"
+  },
+  "Unrecognized USE statement": {
+    "zh": "无法识别的 USE 语句",
+    "ja": "認識できない USE 文です"
+  },
+  "The session statement is outside the verified dump wrapper subset.": {
+    "zh": "会话语句超出已验证的导出包装语句子集。",
+    "ja": "セッション文が検証済みのダンプ補助文の範囲外です。"
+  },
+  "Verify target settings and semantics for lock wrapper statements.": {
+    "zh": "核实锁包装语句对应的目标设置和语义。",
+    "ja": "ロックの補助文に対応する移行先の設定とセマンティクスを確認してください。"
+  },
+  "The input contains DML; data values and application behavior were not assessed.": {
+    "zh": "输入包含 DML；未评估数据值和应用行为。",
+    "ja": "入力に DML が含まれています。データ値とアプリケーションの動作は未評価です。"
+  },
+  "DROP form outside parser coverage": {
+    "zh": "DROP 形式超出解析器覆盖范围",
+    "ja": "DROP の形式がパーサーの対象範囲外です"
+  },
+  "SQL or client instruction outside parser coverage.": {
+    "zh": "SQL 或客户端指令超出解析器覆盖范围。",
+    "ja": "SQL またはクライアント命令がパーサーの対象範囲外です。"
+  },
+  "CREATE object outside parser coverage.": {
+    "zh": "CREATE 对象超出解析器覆盖范围。",
+    "ja": "CREATE オブジェクトがパーサーの対象範囲外です。"
+  },
+  "The target does not support this object definition. Its body and complete business dependencies were not semantically validated.": {
+    "zh": "目标不支持此对象定义。尚未对其程序体和完整业务依赖进行语义验证。",
+    "ja": "移行先はこのオブジェクト定義をサポートしていません。本体と業務上の依存関係全体のセマンティクスは未検証です。"
+  },
+  " Trigger condition: {0}; owning table: {1}.": {
+    "zh": " 触发条件：{0}；所属表：{1}。",
+    "ja": " トリガー条件：{0}、対象テーブル：{1}。"
+  },
+  "Duplicate table definitions; replacement behavior or execution order cannot be assumed.": {
+    "zh": "存在重复表定义；不能假定替换行为或执行顺序。",
+    "ja": "テーブル定義が重複しています。置き換えの動作や実行順序は仮定できません。"
+  },
+  "Duplicate table definitions leave the schema uncertain": {
+    "zh": "重复表定义导致表结构不确定",
+    "ja": "テーブル定義の重複によりスキーマが不確実です"
+  },
+  "A conditional table definition is not a confirmed dependency baseline": {
+    "zh": "条件表定义不能作为已确认的依赖基线",
+    "ja": "条件付きのテーブル定義は確定した依存関係の基準にはなりません"
+  },
+  "Target views are not writable; DDL cannot establish whether the application relies on view writes.": {
+    "zh": "目标视图不可写；DDL 无法确定应用是否依赖视图写入。",
+    "ja": "移行先のビューは書き込み不可です。DDL ではアプリケーションがビューへの書き込みに依存するか判断できません。"
+  },
+  "The view has an explicit security context; target accounts and privileges were not verified.": {
+    "zh": "视图具有显式安全上下文；尚未核实目标账户和权限。",
+    "ja": "ビューに明示的なセキュリティコンテキストがあります。移行先のアカウントと権限は未確認です。"
+  },
+  "The view lacks a recognizable SELECT.": {
+    "zh": "视图缺少可识别的 SELECT。",
+    "ja": "ビューに認識可能な SELECT がありません。"
+  },
+  "Only functions were scanned in the view query and dependencies; verify full query semantics and cross-database privileges manually.": {
+    "zh": "仅扫描了视图查询和依赖中的函数；请手动核实完整查询语义与跨库权限。",
+    "ja": "ビューのクエリと依存関係では関数のみを走査しています。クエリ全体のセマンティクスとデータベース間の権限は手動で確認してください。"
+  },
+  "The executable comment version condition is unconfirmed; the definition is assessed conditionally.": {
+    "zh": "可执行注释的版本条件未确认；对此定义进行条件性评估。",
+    "ja": "実行可能コメントのバージョン条件が未確認のため、この定義を条件付きで評価しています。"
+  },
+  "Incomplete DDL structure.": {
+    "zh": "DDL 结构不完整。",
+    "ja": "DDL 構造が不完全です。"
+  },
+  "No SQL statements are available for assessment.": {
+    "zh": "没有可供评估的 SQL 语句。",
+    "ja": "評価可能な SQL 文がありません。"
+  },
+  "No SQL input is available for assessment.": {
+    "zh": "没有可供评估的 SQL 输入。",
+    "ja": "評価可能な SQL 入力がありません。"
+  },
+  "Static structural checks do not validate SQL syntax; checked refers only to the implemented rule subset.": {
+    "zh": "静态结构检查不验证 SQL 语法；已检查仅指已实现的规则子集。",
+    "ja": "静的な構造チェックは SQL 構文を検証しません。チェック済みは実装済みのルールの範囲のみを指します。"
+  },
+  "Application SQL, transactions, actual data, performance, and the migration pipeline were not assessed.": {
+    "zh": "未评估应用 SQL、事务、实际数据、性能和迁移流程。",
+    "ja": "アプリケーション SQL、トランザクション、実データ、性能、移行パイプラインは未評価です。"
+  },
+  "Verify Cloud capabilities against current product documentation; an offline snapshot does not establish current availability.": {
+    "zh": "请根据最新产品文档核实 Cloud 能力；离线快照不能证明当前可用性。",
+    "ja": "最新の製品ドキュメントで Cloud の機能を確認してください。オフラインのスナップショットでは現在の利用可否を判断できません。"
+  },
+  "Unclosed parenthesis": {
+    "zh": "括号未闭合",
+    "ja": "閉じ括弧がありません"
+  },
+  "Unexpected closing parenthesis": {
+    "zh": "出现意外的右括号",
+    "ja": "予期しない閉じ括弧です"
+  },
+  "Missing recognizable object name": {
+    "zh": "缺少可识别的对象名",
+    "ja": "認識可能なオブジェクト名がありません"
+  },
+  "Incomplete qualified object name": {
+    "zh": "限定对象名不完整",
+    "ja": "修飾されたオブジェクト名が不完全です"
+  },
+  "Unknown SQL mode; string or identifier boundaries cannot be confirmed": {
+    "zh": "SQL 模式未知；无法确认字符串或标识符边界",
+    "ja": "SQL モードが不明なため、文字列または識別子の境界を確認できません"
+  },
+  "Unclosed string or identifier": {
+    "zh": "字符串或标识符未闭合",
+    "ja": "文字列または識別子が閉じられていません"
+  },
+  "Unclosed comment": {
+    "zh": "注释未闭合",
+    "ja": "コメントが閉じられていません"
+  },
+  "Column type or definition outside parser coverage": {
+    "zh": "列类型或定义超出解析器覆盖范围",
+    "ja": "列型または列定義がパーサーの対象範囲外です"
+  },
+  "Missing index column parentheses": {
+    "zh": "索引列缺少括号",
+    "ja": "インデックス列の括弧がありません"
+  },
+  "This release parses CREATE TABLE with explicit columns only; LIKE/AS SELECT is not covered": {
+    "zh": "此版本仅解析显式列定义的 CREATE TABLE；不覆盖 LIKE/AS SELECT",
+    "ja": "このバージョンは列を明示した CREATE TABLE のみを解析し、LIKE/AS SELECT は対象外です"
+  },
+  "Missing expression parentheses": {
+    "zh": "表达式缺少括号",
+    "ja": "式の括弧がありません"
+  },
+  "Column attribute outside parser coverage": {
+    "zh": "列属性超出解析器覆盖范围",
+    "ja": "列属性がパーサーの対象範囲外です"
+  },
+  "Empty index column": {
+    "zh": "索引列为空",
+    "ja": "インデックス列が空です"
+  },
+  "Index column form outside parser coverage": {
+    "zh": "索引列形式超出解析器覆盖范围",
+    "ja": "インデックス列の形式がパーサーの対象範囲外です"
+  },
+  "Missing column attribute value": {
+    "zh": "缺少列属性值",
+    "ja": "列属性の値がありません"
+  },
+  "Index expression outside parser coverage": {
+    "zh": "索引表达式超出解析器覆盖范围",
+    "ja": "インデックス式がパーサーの対象範囲外です"
+  },
+  "Empty column or constraint": {
+    "zh": "列或约束为空",
+    "ja": "列または制約が空です"
+  },
+  "Incomplete constraint": {
+    "zh": "约束不完整",
+    "ja": "制約が不完全です"
+  },
+  "Missing index column list": {
+    "zh": "缺少索引列列表",
+    "ja": "インデックス列のリストがありません"
+  },
+  "Index access method outside parser coverage": {
+    "zh": "索引访问方法超出解析器覆盖范围",
+    "ja": "インデックスのアクセス方式がパーサーの対象範囲外です"
+  },
+  "Missing REFERENCES": {
+    "zh": "缺少 REFERENCES",
+    "ja": "REFERENCES がありません"
+  },
+  "Missing CHECK expression": {
+    "zh": "缺少 CHECK 表达式",
+    "ja": "CHECK 式がありません"
+  },
+  "Duplicate column name": {
+    "zh": "列名重复",
+    "ja": "列名が重複しています"
+  },
+  "Foreign key option outside parser coverage": {
+    "zh": "外键选项超出解析器覆盖范围",
+    "ja": "外部キーのオプションがパーサーの対象範囲外です"
+  },
+  "Foreign key reference action outside parser coverage": {
+    "zh": "外键引用动作超出解析器覆盖范围",
+    "ja": "外部キーの参照動作がパーサーの対象範囲外です"
+  },
+  "Index option outside parser coverage": {
+    "zh": "索引选项超出解析器覆盖范围",
+    "ja": "インデックスオプションがパーサーの対象範囲外です"
+  },
+  "The file cannot be read or is not valid UTF-8; provide a correctly encoded export.": {
+    "zh": "文件无法读取或不是有效的 UTF-8；请提供编码正确的导出文件。",
+    "ja": "ファイルを読み取れないか、有効な UTF-8 ではありません。正しくエンコードされたエクスポートを指定してください。"
+  },
+  "No SQL content is available for assessment.": {
+    "zh": "没有可供评估的 SQL 内容。",
+    "ja": "評価可能な SQL の内容がありません。"
+  },
+  "Partition count": {
+    "zh": "分区数",
+    "ja": "パーティション数"
+  },
+  "MySQL to TiDB DDL Assessment": {
+    "zh": "MySQL 到 TiDB DDL 评估",
+    "ja": "MySQL から TiDB への DDL 評価"
+  },
+  "Assessment completeness: {0}.": {
+    "zh": "评估完整性：{0}。",
+    "ja": "評価の完全性：{0}。"
+  },
+  "complete within rule coverage": {
+    "zh": "在规则覆盖范围内完整",
+    "ja": "ルールの対象範囲内で完了"
+  },
+  "incomplete; input or assessment gaps remain": {
+    "zh": "不完整；仍有输入或评估缺口",
+    "ja": "未完了。入力または評価に未確認項目があります"
+  },
+  "Source version: {0}; target: {1}.": {
+    "zh": "源版本：{0}；目标：{1}。",
+    "ja": "移行元バージョン：{0}、移行先：{1}。"
+  },
+  "Files: {0}; statements: {1}; final objects: {2}.": {
+    "zh": "文件：{0}；语句：{1}；最终对象：{2}。",
+    "ja": "ファイル数：{0}、文の数：{1}、最終オブジェクト数：{2}。"
+  },
+  "Input files": {
+    "zh": "输入文件",
+    "ja": "入力ファイル"
+  },
+  "Findings": {
+    "zh": "检查发现",
+    "ja": "指摘事項"
+  },
+  "No blockers were found within the parsed DDL and applicable rule coverage.": {
+    "zh": "在已解析的 DDL 和适用规则覆盖范围内未发现阻断项。",
+    "ja": "解析済み DDL と適用ルールの対象範囲内では、移行を妨げる問題は見つかりませんでした。"
+  },
+  "unknown": {
+    "zh": "未知",
+    "ja": "不明"
+  },
+  "Input scope": {
+    "zh": "输入范围",
+    "ja": "入力範囲"
+  },
+  "not provided": {
+    "zh": "未提供",
+    "ja": "未指定"
+  },
+  "Evidence: ": {
+    "zh": "证据：",
+    "ja": "根拠："
+  },
+  "Impact: ": {
+    "zh": "影响：",
+    "ja": "影響："
+  },
+  "Recommendation: ": {
+    "zh": "建议：",
+    "ja": "推奨対応："
+  },
+  "References: ": {
+    "zh": "参考：",
+    "ja": "参考資料："
+  },
+  "Official documentation {0}": {
+    "zh": "官方文档 {0}",
+    "ja": "公式ドキュメント {0}"
+  },
+  "Coverage and limitations": {
+    "zh": "覆盖范围与限制",
+    "ja": "対象範囲と制限"
+  },
+  "Rule": {
+    "zh": "规则",
+    "ja": "ルール"
+  },
+  "Status": {
+    "zh": "状态",
+    "ja": "状態"
+  },
+  "Rule sources checked on: {0}.": {
+    "zh": "规则来源核实日期：{0}。",
+    "ja": "ルールの参照元の確認日：{0}。"
+  },
+  "blocker": {
+    "zh": "阻断",
+    "ja": "移行不可"
+  },
+  "high": {
+    "zh": "高",
+    "ja": "高"
+  },
+  "medium": {
+    "zh": "中",
+    "ja": "中"
+  },
+  "info": {
+    "zh": "提示",
+    "ja": "参考情報"
+  },
+  "confirmed": {
+    "zh": "已确认",
+    "ja": "確認済み"
+  },
+  "needs-confirmation": {
+    "zh": "需确认",
+    "ja": "要確認"
+  },
+  "not-assessed": {
+    "zh": "未评估",
+    "ja": "未評価"
+  },
+  "checked": {
+    "zh": "已检查",
+    "ja": "チェック済み"
+  },
+  "not-applicable": {
+    "zh": "不适用",
+    "ja": "該当なし"
+  }
+}

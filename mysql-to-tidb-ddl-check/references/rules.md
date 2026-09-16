@@ -54,7 +54,7 @@ Input gaps are counted separately from database incompatibilities. Missing defin
 
 ## Report contract
 
-JSON contains `schema_version`, `rules_version`, source-check date, source version evidence, target configuration, file inventory, counts, object inventory, rule coverage, and findings.
+JSON contains `schema_version`, `rules_version`, `language`, source-check date, source version evidence, target configuration, file inventory, counts, object inventory, rule coverage, and findings.
 
 Each finding contains `rule_id`, `title`, `object`, `location.file/line_start/line_end`, redacted `evidence`, `severity`, `certainty`, `impact`, `recommendation`, and `source_urls`.
 
@@ -77,3 +77,9 @@ The following sources support capability facts. Advice and remediation strategie
 - [Views](https://docs.pingcap.com/tidb/v8.5/views/): view capabilities and privilege context.
 - [Default values](https://docs.pingcap.com/tidb/v8.5/data-type-default-values/): type-specific expression-default support.
 - [MySQL comments](https://dev.mysql.com/doc/refman/8.4/en/comments.html) and [Dumping stored programs](https://dev.mysql.com/doc/refman/8.4/en/mysqldump-stored-programs.html): executable comments and export completeness.
+
+## Report languages
+
+Use `--language en`, `--language zh`, or `--language ja` for English (default), Simplified Chinese, or Japanese. Both JSON prose and Markdown output use the selected language. Markdown also translates severity, certainty, and coverage display labels; their JSON enum values remain unchanged for automation. Source SQL, identifiers, paths, URLs, and target configuration are never translated. Changing the language does not change finding order, rule decisions, or exit codes.
+
+The bundled `scripts/messages.json` catalog contains Chinese and Japanese translations keyed by English templates. Add translations and matching format placeholders for every new report message. Use deferred messages so parameter values remain literal. CLI help and argument/input error messages remain English; diagnostics inside assessment reports are localized.

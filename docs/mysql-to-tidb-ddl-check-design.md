@@ -6,7 +6,7 @@ This document records design goals and acceptance scenarios. See [SKILL.md](../m
 
 ## Scope and output
 
-Inputs are one or more exported MySQL DDL files. Targets are TiDB 8.5 or TiDB Cloud. Output is an English report containing findings, concrete evidence, impact, and recommendations. The initial release does not connect to databases, execute input SQL, modify DDL, or migrate data automatically.
+Inputs are one or more exported MySQL DDL files. Targets are TiDB 8.5 or TiDB Cloud. Output is a report in English (default), Simplified Chinese, or Japanese, selected with `--language en|zh|ja`, containing findings, concrete evidence, impact, and recommendations. JSON keys and enum values remain stable across languages; only report prose is localized, and a `language` field identifies the selection. The initial release does not connect to databases, execute input SQL, modify DDL, or migrate data automatically.
 
 DDL alone cannot establish compatibility of application transactions, runtime SQL, actual data, performance, or the complete migration pipeline. SQL inside stored programs can help explain an object's purpose, but does not establish that application callers have been assessed.
 
@@ -177,6 +177,8 @@ mysql-to-tidb-ddl-check/
 │   └── target-profiles.md
 ├── scripts/
 │   ├── check_ddl.py
+│   ├── i18n.py
+│   ├── messages.json
 │   ├── ddlparse.py
 │   └── sqlscan.py
 └── tests/
