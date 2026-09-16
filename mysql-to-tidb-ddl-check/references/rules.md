@@ -12,7 +12,7 @@ The checker combines a position-preserving lexer with a bounded structural parse
 | OBJ-002 | CREATE TRIGGER, owning table, timing, and event | Blocker; preserves object relationships for further body analysis by the Agent |
 | OBJ-003 | CREATE EVENT | Blocker even when disabled; actual business impact is assessed separately |
 | OBJ-004 | CREATE FUNCTION ... SONAME | Blocker; ordinary built-in functions and strings are not UDFs |
-| IDX-001 | FULLTEXT inside CREATE TABLE | Capability difference for self-managed 8.5; Cloud defaults to minimum regional capabilities when region is omitted; Starter/Essential/Premium/Dedicated FULLTEXT is high/confirmed incompatible under that policy. Explicit regional exceptions require verified capability evidence |
+| IDX-001 | FULLTEXT inside CREATE TABLE | Capability difference for self-managed 8.5; Cloud defaults to minimum capabilities across providers and regions when either is omitted; Starter/Essential/Premium/Dedicated FULLTEXT is high/confirmed incompatible under that policy. Explicit deployment-specific exceptions require verified capability evidence |
 | TYPE-001 | Spatial column types and SPATIAL indexes | Blocker for a known unsupported target; ignores keywords inside comments or identifiers |
 | IDX-002 | DESC in index columns | Index implementation difference; does not establish incorrect query results |
 | AUTO-001 | Auto-increment columns in CREATE TABLE | Informational confirmation request; existence is not a blocker and does not justify automatically switching to AUTO_RANDOM |

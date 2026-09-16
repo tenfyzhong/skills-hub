@@ -38,16 +38,15 @@ The script defaults to self-managed TiDB 8.5. Other or unknown versions can be s
 ```json
 {
   "product": "cloud",
-  "plan": "starter",
-  "provider": "aws"
+  "plan": "starter"
 }
 ```
 
-Add `version` when the service version is known. Do not invent values to suppress findings. Collect plan and provider; do not request a region. Omitting region is valid and does not produce INPUT-005. Use the minimum capability set across regions: known incompatibility in any region means incompatible under this policy, not merely unknown. Supplying only `product: cloud` still enables common object checks and produces INPUT-005.
+Add `version` when the service version is known. Do not invent values to suppress findings. Collect the plan; do not request a cloud provider or region. Omitting either or both is valid and does not produce INPUT-005. Use the minimum capability set across providers and regions for that plan: known incompatibility in any applicable provider or region means incompatible under this policy, not merely unknown. Supplying only `product: cloud` still enables common object checks and produces INPUT-005.
 
-The 2026-09-16 documentation snapshot limits Starter FULLTEXT to selected regions; Essential and Dedicated list it as unavailable, and Premium as under development. With no region, the checker therefore reports IDX-001 as high/confirmed for these four plans, explaining the minimum regional capability assumption. It does so even when `fulltext: true` is supplied without a region. Unknown plans retain uncertainty; absence of evidence alone does not establish incompatibility. FULLTEXT is currently the only automated capability with a regional default. Apply the same policy to documented regional differences identified during manual review.
+The 2026-09-16 documentation snapshot limits Starter FULLTEXT to selected regions; Essential and Dedicated list it as unavailable, and Premium as under development. With either provider or region omitted, the checker therefore reports IDX-001 as high/confirmed for these four plans, explaining the minimum capability assumption across providers and regions. It does so even when `fulltext: true` is supplied without both provider and region. Unknown plans retain uncertainty; absence of evidence alone does not establish incompatibility. FULLTEXT is currently the only automated capability with a default across providers and regions. Apply the same policy to documented provider or regional differences identified during manual review.
 
-If the customer voluntarily supplies a region and explicitly wants a regional assessment, include verified capability evidence as follows:
+If the customer voluntarily supplies both provider and region and explicitly wants a deployment-specific assessment, include verified capability evidence as follows:
 
 ```json
 {
@@ -61,7 +60,7 @@ If the customer voluntarily supplies a region and explicitly wants a regional as
 }
 ```
 
-`fulltext: true` suppresses only the missing-or-unknown-capability finding. It does not prove equivalent tokenization, query results, or MySQL full-text semantics. For an explicit regional assessment, false means unsupported and omission means unknown; true requires plan, provider, and region. A region alone does not establish feature support. With no region, the minimum regional policy takes precedence for known plans. The report preserves the complete target configuration for review.
+`fulltext: true` suppresses only the missing-or-unknown-capability finding. It does not prove equivalent tokenization, query results, or MySQL full-text semantics. For an explicit deployment-specific assessment, false means unsupported and omission means unknown; true requires plan, provider, and region. A region alone does not establish feature support. With either provider or region omitted, the minimum capability policy takes precedence for known plans. The report preserves the complete target configuration for review.
 
 Check the [Cloud feature matrix](https://docs.pingcap.com/tidbcloud/features/), [Cloud compatibility documentation](https://docs.pingcap.com/tidbcloud/mysql-compatibility/), and [full-text availability](https://docs.pingcap.com/ai/vector-search-full-text-search-sql/). The script does not access the network. Its conservative defaults are a dated snapshot; verify these sources when using the skill and update the snapshot and tests when availability changes. Other version-dependent Cloud rules generally require confirmation. Common unsupported-object findings use the documented snapshot; verify current sources before delivering an assessment.
 
