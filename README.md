@@ -16,6 +16,25 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 - resume-agent-session - reconstruct compact working context from Codex, Pi, Oh My Pi, or Claude Code sessions
 - resolve-git-conflicts - resolve Git conflicts from merge, rebase, cherry-pick, or stash operations
 
+## Agent Prompt Example: MySQL to TiDB DDL Check
+
+After installing the skill, paste this prompt into your agent. Replace the file path, source version, target plan, and report language with your own values:
+
+```text
+Use $mysql-to-tidb-ddl-check to assess /path/to/schema.sql exported from
+MySQL 8.0.36 for migration to TiDB Cloud Starter. Write the report in English.
+
+Use the minimum capability set across cloud providers and regions; do not
+ask me for a provider or region. I have not confirmed whether routines,
+events, and triggers were fully exported, so retain that coverage gap.
+
+Include blockers, items requiring action or confirmation, file and line
+locations, remediation suggestions, and coverage limitations. Do not
+connect to a database, execute SQL, or modify the input file.
+```
+
+You can also supply a directory of `.sql` files, choose self-managed TiDB 8.5 as the target, or request a Chinese or Japanese report. See the [skill instructions](mysql-to-tidb-ddl-check/SKILL.md) for supported inputs and assessment boundaries.
+
 ## Skill Designs
 
 - [MySQL to TiDB DDL checks](docs/mysql-to-tidb-ddl-check-design.md) - design rationale, rule catalog, and acceptance scenarios; see the [skill](mysql-to-tidb-ddl-check/SKILL.md) for usage and implemented coverage
