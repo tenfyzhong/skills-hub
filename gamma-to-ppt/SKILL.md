@@ -1,6 +1,6 @@
 ---
 name: gamma-to-ppt
-description: Recreate public Gamma webpages (gamma.site or accessible Gamma presentation pages) as editable PowerPoint/PPTX files or Feishu slides. Use for page-by-page conversion that preserves source content, composition, icons, and colors, or for repairing visual differences in existing conversions; not for freely rewriting or redesigning presentations.
+description: Convert Gamma webpages into editable PowerPoint/PPTX files or Feishu slides.
 ---
 
 # Gamma to Editable PPT
@@ -9,6 +9,7 @@ Use the user-specified Gamma webpage as the visual and content reference for an 
 
 ## Scope and Deliverables
 
+- Accept public `gamma.site` webpages or accessible Gamma presentation pages. Convert them page by page or repair visual differences in existing conversions. This skill does not cover freely rewriting or redesigning presentations.
 - Follow the requested destination: a PPTX file, a new Feishu presentation, or an existing presentation. Continue when the available context is sufficient; ask only when an unresolved destination affects delivery.
 - Preserve the source language and complete content by default. Do not expand, omit, rewrite, or add diagram entries absent from the source unless the user explicitly requests those changes.
 - Represent text, flows, arrows, ring diagrams, icons, and callouts with native editable objects in the target format. Source photographs, textures, and assets that are already bitmaps may remain images.
