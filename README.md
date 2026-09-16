@@ -9,7 +9,7 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 - deploy-ec2-aws - deploy and validate named EC2 nodes with Terraform, drift-safe updates, private networking, and stable public IPs
 - deploy-tidb-aws - deploy or manage TiDB clusters on AWS with Terraform and TiUP
 - implement-issue - implement a GitHub issue from an issue URL or number
-- mysql-to-tidb-ddl-check - assess exported MySQL DDL for TiDB 8.5 and TiDB Cloud using minimum regional capabilities by default (no region required), with English, Chinese, or Japanese reports containing located findings, coverage gaps, and remediation advice
+- mysql-to-tidb-ddl-check - assess exported MySQL DDL for TiDB 8.5 and TiDB Cloud using minimum capabilities across providers and regions by default (neither provider nor region required), with English, Chinese, or Japanese reports containing located findings, coverage gaps, and remediation advice
 - new-issue - create or file a GitHub issue, bug report, or feature request from the conversation context
 - natural-writing - polish Chinese and English articles to sound less templated while preserving the author's voice and meaning
 - pr-review - review a GitHub or GitLab pull request from a PR URL or number

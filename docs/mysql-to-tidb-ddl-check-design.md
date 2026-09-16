@@ -21,7 +21,7 @@ Delivery sequence: rule design, parser selection and failing tests, a minimal ch
 | source_version_evidence | User declaration, dump server version, or unknown; never confuse the mysqldump client version with the server version |
 | target_product | self-managed / cloud; unknown information does not prevent common checks |
 | target_version | 8.5.x for self-managed deployments, with a known patch version when available; unknown Cloud versions remain explicit |
-| cloud_plan / provider / region | Cloud plan and provider; region is optional and must not be requested. Omission uses the minimum capability set across regions |
+| cloud_plan / provider / region | Cloud plan; provider and region are optional and must not be requested. Omitting either uses the minimum capability set across providers and regions |
 | target_settings | Optional configuration evidence; missing settings must not be assumed to equal documented defaults |
 | export_scope | Optional export command and object scope to assess routines, events, and triggers completeness |
 | file_order | Optional execution order; sorting a directory ensures stable output, not import order |
@@ -60,7 +60,7 @@ In the following tables, 8.5 refers to the verified TiDB 8.5 documentation. Clou
 | OBJ-002 | CREATE TRIGGER; 8.5 / Cloud | Blocker; record owning table, timing, event, and body without claiming to know all writers | Explain logic to preserve; assess every write path and atomicity rather than simply deleting the trigger | S1, S2 |
 | OBJ-003 | CREATE EVENT; 8.5 / Cloud | Blocker even when DISABLE is specified; separate actual business impact | Move scheduling outside the database while preserving frequency, time zone, idempotency, and concurrency | S1, S2 |
 | OBJ-004 | CREATE FUNCTION ... SONAME UDF; 8.5 / Cloud | Blocker; distinguish external UDFs from stored and built-in functions | List visible dependencies and evaluate verified built-in or application replacements | S1, S2 |
-| IDX-001 | FULLTEXT index; 8.5 / Cloud | 8.5: high/confirmed capability difference; parsing does not imply an effective index. Cloud without region uses the minimum regional capability set: any documented regional incompatibility means incompatible. Unknown plans require confirmation; explicit regional exceptions need verified evidence | Verify full-text queries and tokenization requirements; ordinary indexes or LIKE are not equivalent substitutes | S1, S2, S3 |
+| IDX-001 | FULLTEXT index; 8.5 / Cloud | 8.5: high/confirmed capability difference; parsing does not imply an effective index. Cloud without provider or region uses the minimum capability set across providers and regions: any documented provider or regional incompatibility means incompatible. Unknown plans require confirmation; explicit deployment-specific exceptions need verified evidence | Verify full-text queries and tokenization requirements; ordinary indexes or LIKE are not equivalent substitutes | S1, S2, S3 |
 | TYPE-001 | Spatial types and SPATIAL indexes; 8.5 / applicable Cloud | Blocker; match type and index structures, not object names | Preserve spatial requirements before evaluating services or representations; JSON is not automatically equivalent | S1, S2 |
 | IDX-002 | Explicit DESC index keys; 8.5, Cloud checked separately | medium/confirmed capability difference; do not claim reversed query results or automatically block the business | Identify indexes and recommend subsequent plan and performance validation | S1 |
 
@@ -103,7 +103,7 @@ These rules describe confidence in the assessment and are counted separately fro
 | INPUT-002 | Unknown routines/events/triggers export scope | Request export options or a scope declaration; zero definitions do not prove zero source objects. See S13 |
 | INPUT-003 | Truncated or unparseable statements, unknown client instructions, or decoding failures | Preserve file and line information, mark affected scope incomplete, and continue where recovery is reliable |
 | INPUT-004 | Unknown file order, USE context, inherited defaults, or dependencies | Do not guess import order or a default database; affected decisions require confirmation |
-| INPUT-005 | Missing Cloud plan/provider, outdated sources, or conflicting documentation | Continue common checks and retain product-specific uncertainty rather than assuming equivalence with self-managed 8.5 |
+| INPUT-005 | Missing Cloud plan, outdated sources, or conflicting documentation | Continue common checks and retain product-specific uncertainty rather than assuming equivalence with self-managed 8.5 |
 
 For future exports, explicitly include routines, events, and triggers, and retain export errors. This skill does not connect to or export databases. Verify commands against the source version and export tool; `--no-data` alone does not establish object completeness. [S13](https://dev.mysql.com/doc/refman/8.4/en/mysqldump-stored-programs.html)
 

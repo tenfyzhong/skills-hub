@@ -81,6 +81,39 @@ DELIMITER ;
         self.assertTrue(report['summary']['complete'])
         self.assertNotIn('region', report['target'])
 
+    def test_cloud_provider_and_region_are_optional(self):
+        for language in ('en', 'zh', 'ja'):
+            target = dict(product='cloud', plan='starter')
+            report = self.report('CREATE TABLE t(id INT PRIMARY KEY);',
+                                 target=target, language=language)
+            self.assertEqual(report['findings'], [])
+            self.assertTrue(report['summary']['complete'])
+            self.assertNotIn('provider', report['target'])
+            self.assertNotIn('region', report['target'])
+
+    def test_cloud_missing_provider_uses_minimum_capabilities(self):
+        sql = 'CREATE TABLE t(body TEXT, FULLTEXT KEY ft(body));'
+        for plan in ('starter', 'essential', 'premium', 'dedicated'):
+            for region in (None, 'us-west-2'):
+                with self.subTest(plan=plan, region=region):
+                    target = dict(product='cloud', plan=plan,
+                                  capabilities={'fulltext': True})
+                    if region:
+                        target['region'] = region
+                    report = self.report(sql, target=target)
+                    self.assertFalse(any(f['rule_id'] == 'INPUT-005'
+                                         for f in report['findings']))
+                    finding = next(f for f in report['findings']
+                                   if f['rule_id'] == 'IDX-001')
+                    self.assertEqual((finding['severity'], finding['certainty']),
+                                     ('high', 'confirmed'))
+
+    def test_cloud_plan_is_still_required(self):
+        for target in (dict(product='cloud'), dict(product='cloud', provider='aws')):
+            report = self.report('CREATE TABLE t(id INT);', target=target)
+            self.assertTrue(any(f['rule_id'] == 'INPUT-005' for f in report['findings']))
+            self.assertFalse(report['summary']['complete'])
+
     def test_cloud_minimum_regional_fulltext_capability(self):
         sql = 'CREATE TABLE t(body TEXT, FULLTEXT KEY ft(body));'
         for plan in ('starter', 'essential', 'premium', 'dedicated'):

@@ -731,24 +731,24 @@
     "zh": "不适用",
     "ja": "該当なし"
   },
-  "Use the minimum regional capability by default; use verified target evidence only for an explicit regional assessment. Ordinary indexes or LIKE are not equivalent replacements.": {
-    "zh": "默认使用各地区的最小能力集；仅在明确按地区评估时使用已验证的目标证据。普通索引或 LIKE 不是等价替代。",
-    "ja": "既定では各リージョンの最小機能セットを使用し、明示的なリージョン別評価に限り検証済みの移行先情報を使用してください。通常のインデックスや LIKE は同等の代替ではありません。"
+  "Use the minimum capability set across providers and regions by default; use verified target evidence only for an explicit deployment-specific assessment. Ordinary indexes or LIKE are not equivalent replacements.": {
+    "zh": "默认使用跨云厂商、跨地区的最小能力集；仅在明确评估具体部署时使用已验证的目标证据。普通索引或 LIKE 不是等价替代。",
+    "ja": "既定ではプロバイダーとリージョンをまたぐ最小機能セットを使用し、明示的なデプロイ先別評価に限り検証済みの情報を使用してください。通常のインデックスや LIKE は同等の代替ではありません。"
   },
-  "Provide the Cloud plan, provider, and capability evidence. Region is optional. Recheck rolling product documentation when using the skill.": {
-    "zh": "提供 Cloud 套餐、云厂商及能力证据。地区为可选项。使用 skill 时重新核对持续更新的产品文档。",
-    "ja": "Cloud プラン、プロバイダー、機能の根拠を指定してください。リージョンは省略可能です。スキル使用時に更新される製品ドキュメントを再確認してください。"
+  "Provide the Cloud plan and verify capability evidence. Provider and region are optional; do not request them. Recheck rolling product documentation when using the skill.": {
+    "zh": "提供 Cloud 套餐并核对能力证据。云厂商和地区均为可选项，不要要求用户提供。使用 skill 时重新核对持续更新的产品文档。",
+    "ja": "Cloud プランを指定し、機能の根拠を確認してください。プロバイダーとリージョンは省略可能であり、ユーザーに入力を求めないでください。スキル使用時に更新される製品ドキュメントを再確認してください。"
   },
-  "The Cloud plan or provider is missing.": {
-    "zh": "缺少 Cloud 套餐或云厂商。",
-    "ja": "Cloud プランまたはプロバイダーが指定されていません。"
+  "The Cloud plan is missing.": {
+    "zh": "缺少 Cloud 套餐。",
+    "ja": "Cloud プランが指定されていません。"
   },
   "Verify the Cloud plan and current full-text capability evidence.": {
     "zh": "核对 Cloud 套餐及当前全文检索能力证据。",
     "ja": "Cloud プランと現在の全文検索機能の根拠を確認してください。"
   },
-  "FULLTEXT is incompatible with the minimum regional capability set: it is not supported in every region for this Cloud plan. No region was specified.": {
-    "zh": "FULLTEXT 与最小地区能力集不兼容：此 Cloud 套餐并非在所有地区都支持该功能。未指定地区。",
-    "ja": "FULLTEXT はリージョン間の最小機能セットと互換性がありません。この Cloud プランのすべてのリージョンで対応しているわけではありません。リージョンは未指定です。"
+  "FULLTEXT is incompatible with the minimum capability set across providers and regions for this Cloud plan. Provider or region was omitted.": {
+    "zh": "FULLTEXT 与此 Cloud 套餐跨云厂商、跨地区的最小能力集不兼容。未指定云厂商或地区。",
+    "ja": "FULLTEXT はこの Cloud プランのプロバイダーとリージョンをまたぐ最小機能セットと互換性がありません。プロバイダーまたはリージョンが未指定です。"
   }
 }
