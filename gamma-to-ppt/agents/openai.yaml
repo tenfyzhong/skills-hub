@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gamma 到可编辑 PPT"
+  short_description: "按 Gamma 网页原稿复刻可编辑 PPT，保留构图、矢量图标与对齐"
+  default_prompt: "使用 $gamma-to-ppt 将我提供的 Gamma 网页复刻成可编辑 PPT，保留原稿内容、构图、图标和配色，并逐页检查视觉差异。"
