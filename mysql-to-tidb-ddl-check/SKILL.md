@@ -1,11 +1,11 @@
 ---
 name: mysql-to-tidb-ddl-check
-description: Check exported MySQL DDL files for migration compatibility with TiDB 8.5 or TiDB Cloud. Report located findings, uncertainty, coverage gaps, and remediation suggestions. Use for offline schema migration assessments, not live database inspection or automatic SQL rewriting.
+description: Check exported MySQL DDL files for migration compatibility with TiDB 8.5 or TiDB Cloud.
 ---
 
 # MySQL to TiDB DDL Assessment
 
-Assess user-provided SQL files or directories and produce an English compatibility report with recommendations. Use the bundled offline checker to obtain reproducible structural evidence, then explain business implications. Do not connect to databases, execute SQL, or rewrite inputs by default.
+Assess user-provided SQL files or directories offline and produce an English compatibility report with located findings, uncertainty, coverage gaps, and remediation suggestions. Use the bundled offline checker to obtain reproducible structural evidence, then explain business implications. Do not connect to databases, execute SQL, or rewrite inputs by default.
 
 ## Collect inputs
 
