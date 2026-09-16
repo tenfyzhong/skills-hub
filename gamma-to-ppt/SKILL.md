@@ -1,69 +1,69 @@
 ---
 name: gamma-to-ppt
-description: 将 Gamma 公开网页（gamma.site 或可访问的 Gamma 演示页面）复刻为可编辑的 PowerPoint/PPTX 或飞书幻灯片。用于保留原稿内容、构图、图标和配色的逐页转换，以及修复已有转换稿的视觉差异；不用于自由改写或重新设计演示稿。
+description: Recreate public Gamma webpages (gamma.site or accessible Gamma presentation pages) as editable PowerPoint/PPTX files or Feishu slides. Use for page-by-page conversion that preserves source content, composition, icons, and colors, or for repairing visual differences in existing conversions; not for freely rewriting or redesigning presentations.
 ---
 
-# Gamma 到可编辑 PPT
+# Gamma to Editable PPT
 
-以用户指定的 Gamma 网页为视觉与内容依据，生成可继续编辑的演示稿。复刻包括文字、图形之间的关系、图片位置、图标、颜色、间距和页序，不能只迁移文案后套用通用模板。
+Use the user-specified Gamma webpage as the visual and content reference for an editable presentation. Reproduce text, relationships between shapes, image placement, icons, colors, spacing, and page order. Do not simply transfer the copy into a generic template.
 
-## 范围与交付
+## Scope and Deliverables
 
-- 遵循用户指定的目标：PPTX、飞书新文档或已有演示稿。已有上下文足够时直接继续；只有目标仍不明确且影响交付时才询问。
-- 默认保留原文语言和完整内容，不扩写、不删改、不添加原稿不存在的图表条目。用户明确要求调整的部分除外。
-- 文字、流程、箭头、环形图、图标和提示框用目标格式的原生可编辑对象表达。原稿照片、纹理和本来就是位图的素材可保留为图片。
-- 截图可以用于视觉检查，但不能作为整页或复杂图形的交付替代品。将 SVG 当成一张图片插入也不等于各组件可编辑。
-- 使用源文件导出可减少工作量，但导出成功不代表复刻成功。导入后的构图、图标与可编辑性仍需检查。
-- 不承诺跨渲染器自动达到像素级一致。先按原稿重建并修正可见差异；仍有字体、动画或画布比例限制时，说明具体页和具体差异。
+- Follow the requested destination: a PPTX file, a new Feishu presentation, or an existing presentation. Continue when the available context is sufficient; ask only when an unresolved destination affects delivery.
+- Preserve the source language and complete content by default. Do not expand, omit, rewrite, or add diagram entries absent from the source unless the user explicitly requests those changes.
+- Represent text, flows, arrows, ring diagrams, icons, and callouts with native editable objects in the target format. Source photographs, textures, and assets that are already bitmaps may remain images.
+- Use screenshots for visual inspection, never as substitutes for entire slides or complex diagrams in the deliverable. Inserting an SVG as a single image does not make its components editable.
+- Exporting source files may reduce work, but a successful export does not prove a faithful conversion. Check composition, icons, and editability after import.
+- Do not promise automatic pixel-level fidelity across renderers. Rebuild from the source and correct visible differences; identify specific pages and differences where font, animation, or aspect-ratio limitations remain.
 
-## 读取原稿并建立页映射
+## Read the Source and Map Pages
 
-1. 打开指定页面，确认可见内容与加载状态。选择稳定的桌面视口，记录宽高和缩放。等待字体、图片与延迟加载内容完成；逐卡检查，不能只读首屏。
-2. 若正常导出入口可用，下载原始 PPTX 并检查。若导出无权访问但公开页面可读，继续从公开页面重建；不绕过权限，也不反复尝试相同的受限入口。
-3. 用当前环境允许的网页读取方式取得可见 DOM、样式、SVG 和源图片。若工具只允许读取已呈现 DOM，不读取隐藏应用状态或使用其他方式绕过工具限制。
-4. Gamma 曾使用 `[data-card-id]` 标识卡片，`aside.gml-callout` 标识提示框。这些只是定位线索：在当前页面验证后再使用，不能把旧版选择器当成固定协议。
-5. 保存每页原文、布局类型、图片地址及裁切、主要边界、字体、颜色、图标路径、图形顺序。JSON 或 HTML 中存在但网页没有显示的条目不能直接搬进 PPT；先解释与可见页面的差异。
-6. 建立清晰的映射：源卡片 ID / 源序号 → 输出页序号 / 目标 slide ID。页数来自当前原稿，不使用历史任务的固定页数。
+1. Open the specified page and confirm its visible content and loading state. Choose a stable desktop viewport and record its dimensions and zoom. Wait for fonts, images, and lazy-loaded content; inspect every card rather than only the first screen.
+2. If the normal export option is available, download and inspect the original PPTX. If export access is denied but the public page is readable, rebuild from that page. Do not bypass permissions or repeatedly retry the same restricted entry point.
+3. Retrieve the visible DOM, styles, SVGs, and source images using webpage-reading methods permitted in the current environment. If a tool permits only rendered DOM access, do not read hidden application state or bypass that restriction through another method.
+4. Gamma has used `[data-card-id]` for cards and `aside.gml-callout` for callouts. Treat these as locator hints: verify them on the current page before use, and do not treat historical selectors as a fixed protocol.
+5. Record each page's original text, layout type, image URLs and cropping, major boundaries, fonts, colors, icon paths, and shape order. Do not directly copy entries that exist in JSON or HTML but are not displayed on the webpage; first explain the discrepancy with the visible page.
+6. Establish an explicit mapping: source card ID / source index -> output page index / target slide ID. Derive the page count from the current source, not a fixed count from an earlier task.
 
-建议在任务目录保留 `source/`、`assets/`、`pages/`、`qa/` 和一份 manifest，记录来源 URL、读取时间、视口、页映射、目标尺寸、可编辑对象类型、原始位图素材和待修复差异。不要把业务内容、登录数据或文档 token 写入技能仓库。
+Keep `source/`, `assets/`, `pages/`, `qa/`, and a manifest in the task directory when useful. Record the source URL, retrieval time, viewport, page mapping, target dimensions, editable object types, original bitmap assets, and unresolved differences. Do not write business content, login data, or document tokens into the skill repository.
 
-如果还要合并其他演示稿：先确认源页序号与实际 slide ID，读取要插入的原生页面；按用户指定位置插入并更新映射。例如“最后一页前面”应定位原稿末页再插入，不是简单追加。转移页面所依赖的媒体、字体和主题后，在目标中验证显示及页序，保留源文档。
+When merging another presentation, confirm source page indices and actual slide IDs, then read the native pages to insert. Insert them at the requested position and update the mapping. For example, "before the last page" requires locating the original final page before insertion, rather than appending. Transfer dependent media, fonts, and themes, then verify rendering and page order in the destination. Preserve the source document.
 
-## 保持版式而不是重排主题
+## Preserve the Layout
 
-先读目标画布尺寸。将源卡片的有效内容区映射到目标，保持图片的左右位置、列宽比例、层级、连接方向、嵌套关系、图形数量和图文对应顺序。
+Read the target canvas dimensions first. Map the source card's effective content area to the destination while preserving image placement on the left or right, column proportions, hierarchy, connection directions, nesting, shape counts, and the correspondence and order of text and graphics.
 
-- 用统一比例缩放原稿构图；必要时平移到目标内容区。不要独立拉伸横纵坐标把圆压成椭圆。
-- 若网页卡片比例与目标不一致，优先保留构图和可读性，再调整留白或目标尺寸。不能悄悄裁掉内容；确实无法容纳时说明取舍。
-- 检查真实字体是否可用。字体替换会改变换行、字宽和基线，不要把所有溢出问题都用缩小字号解决。
-- 图层顺序同样属于版式。背景、连接线、主图、图标、文字按原稿叠放，避免新增背景覆盖已有文字。
-- 自动布局组件转换后不同，就逐组件重画。不要因为目标模板更方便而改变原稿关系。
+- Scale the source composition uniformly and translate it into the target content area as needed. Do not stretch horizontal and vertical coordinates independently, turning circles into ellipses.
+- If source and target aspect ratios differ, prioritize composition and readability, then adjust whitespace or target dimensions. Never silently crop content; explain the tradeoff if it cannot fit.
+- Check whether the actual fonts are available. Substitutions affect line wrapping, character widths, and baselines. Do not solve every overflow by shrinking the font.
+- Layer order is part of the layout. Stack backgrounds, connectors, main graphics, icons, and text as in the source, ensuring new backgrounds do not cover existing text.
+- If an automatic layout changes during conversion, redraw its components. Do not change source relationships merely because a target template is more convenient.
 
-优先验证风险最大的几页，再沿同一规则扩展到全稿：密集文字页、图片与文字分栏页、复杂矢量图页、含提示框页。这样可在批量生成前发现字体、路径和缩放问题。
+Validate the highest-risk pages first, then apply the same rules to the remaining slides: dense text, image/text columns, complex vector diagrams, and callouts. This exposes font, path, and scaling problems before bulk generation.
 
-## 可编辑矢量重建
+## Rebuild Editable Vectors
 
-优先复用原稿 SVG 的几何，转换为目标原生路径；没有可用矢量时，按参考外观用原生组件重绘。普通圆、矩形、线条可以直接用标准形状，复杂轮廓使用自由路径。
+Prefer reusing source SVG geometry and converting it into native target paths. When vectors are unavailable, redraw the reference with native components. Use standard shapes for ordinary circles, rectangles, and lines, and freeform paths for complex outlines.
 
-处理 SVG 时保留 `viewBox` 原点、嵌套 transform、填充规则、描边、透明度和裁切含义；不能只提取所有 `d` 属性拼接。把变换展开到坐标后，转换到目标形状的局部坐标系。目标不支持圆弧时，用足够精度的贝塞尔曲线近似，按输出尺寸检查误差；不要假设固定分段数对所有图都准确。
+Preserve the `viewBox` origin, nested transforms, fill rules, strokes, opacity, and clipping semantics when processing SVGs. Do not merely extract and concatenate every `d` attribute. Apply transforms to the coordinates, then convert them into the target shape's local coordinate system. If the destination does not support arcs, approximate them with sufficiently accurate Bezier curves and inspect error at the output size. Do not assume a fixed segment count is accurate for every graphic.
 
-原生路径的检查点：
+Check native paths for the following:
 
-- 每个子路径保留起点和闭合语义，空心图标的孔洞不能被填实。
-- 路径包围盒与形状的宽高、位置相匹配；非零 viewBox 起点要计入变换。
-- 线性缩放同时考虑描边粗细，避免小图标线条过重或消失。
-- 分段图按各段保留独立对象，图标和标签也分别保留对象。需要时组合便于移动，同时验证可取消组合并编辑。
-- 检查实际目标渲染器支持的渐变、透明度、描边和路径语法，不凭格式名称猜测。
+- Preserve each subpath's starting point and closure semantics. Do not fill the holes in hollow icons.
+- Match path bounds to the shape's dimensions and position. Include nonzero viewBox origins in transforms.
+- Account for stroke width during scaling so small icons neither become too heavy nor disappear.
+- Keep diagram segments as separate objects, with icons and labels also separate. Group them for convenient movement when useful, and verify they can be ungrouped and edited.
+- Verify the actual target renderer's support for gradients, opacity, strokes, and path syntax rather than inferring support from the format name.
 
-例如环形飞轮应保持原稿的分段数、缺口、内外轮廓、旋转角度及图标顺序；不能用几个普通扇形或一张图替代。嵌套相切圆应保持相切关系，不能自动改为同心圆。箭头序列应只保留网页实际显示的条目。
+For example, a segmented flywheel must retain its segment count, gaps, inner and outer contours, rotation, and icon order. Do not replace it with a few ordinary sectors or a single image. Preserve tangency in nested tangent circles rather than converting them into concentric circles. Arrow sequences must contain only entries actually displayed on the webpage.
 
-## 提示框：图标、配色与垂直居中
+## Callouts: Icons, Colors, and Vertical Alignment
 
-逐页盘点提示框，包含成功、警告、信息等所有实际出现的类型。读取原稿 SVG 和计算样式，不用 emoji 或近似字符代替。Gamma 可能通过 `data-variant` 和 `--callout-<variant>-bg` / `--callout-<variant>-icon` 定义颜色，需核实当前页面；不能给所有提示框套同一种背景。
+Inventory callouts on every page, including all success, warning, information, and other types present. Read source SVGs and computed styles rather than substituting emoji or approximate characters. Gamma may define colors through `data-variant` and `--callout-<variant>-bg` / `--callout-<variant>-icon`; verify this on the current page. Do not apply one background color to every callout.
 
-背景、图标、文字是三个可独立编辑的对象。先为图标留出水平槽位，再计算文字宽度，最后检查换行与高度。图标和正文应分别相对整个提示区块垂直居中，不能按正文首行的顶部推算图标位置。
+The background, icon, and text must be independently editable objects. Reserve a horizontal slot for the icon, calculate the text width, then inspect wrapping and height. Center the icon and body text independently within the full callout area; do not derive icon placement from the top of the first text line.
 
-设背景位置和尺寸为 `(bx, by, bw, bh)`，图标实际高度为 `ih`，图标槽位宽为 `slot`，左右边距为 `pl`、`pr`，图文间距为 `gap`：
+Given background position and dimensions `(bx, by, bw, bh)`, actual icon height `ih`, icon slot width `slot`, left and right padding `pl` and `pr`, and icon-to-text gap `gap`:
 
 ```text
 center_y = by + bh / 2
@@ -76,17 +76,17 @@ text_vertical_alignment = middle
 text_padding_top = text_padding_bottom
 ```
 
-如果目标不支持文字框内垂直居中，应测量实际排版后的文字高度，以同一中心线摆放。多行正文也要作为整体居中，不能只居中第一行。包围盒中心一致之后仍要目视检查字形基线及图标可见轮廓，避免透明边缘造成视觉偏移。
+If the destination cannot vertically center content within a text box, measure the laid-out text height and position it on the same centerline. Center multiline text as a whole, not just its first line. Even when bounding-box centers match, visually inspect glyph baselines and visible icon contours; transparent margins can cause apparent misalignment.
 
-## 写入目标
+## Write to the Destination
 
-### 飞书幻灯片
+### Feishu Slides
 
-使用当前可用的 `lark-slides` 能力和其编辑、XML schema 文档；导入 PPTX 时使用对应 Drive 导入能力。先检查工具是否支持，不把其他文档类型的 API 当作幻灯片 API。没有这些工具时可以使用受支持的 UI 操作或交付本地 PPTX，但必须说明尚未创建的在线交付，不能宣称已经发布。
+Use the available `lark-slides` capabilities and their editing and XML schema documentation. Use the corresponding Drive import capability when importing PPTX. Check tool support first; do not substitute APIs for other document types. If these tools are unavailable, use supported UI operations or deliver a local PPTX, clearly identifying any online deliverable that has not been created. Do not claim it has been published.
 
-新建时记录 presentation ID、slide ID 和写入结果。已有稿件修改前重新读取当前 XML 及 revision，用户可能在前一轮之后改过内容。不要用旧的本地全稿覆盖最新文档。
+When creating a presentation, record its presentation ID, slide IDs, and write results. Before modifying an existing presentation, reread its current XML and revision because the user may have edited it since the previous turn. Do not overwrite the latest document with an older local copy of the entire presentation.
 
-对齐、图标、颜色等局部修改使用块级替换；只有整页确实需要重建时才整页覆盖。飞书当前 shortcut 的典型形式如下，执行前用当前 CLI help 核实：
+Use block-level replacement for local alignment, icon, and color edits. Replace an entire slide only when it genuinely requires rebuilding. Typical Feishu shortcut commands are shown below; verify them with the current CLI help before execution:
 
 ```bash
 lark-cli slides +xml-get --as user --presentation TARGET_ID --output before.xml
@@ -94,35 +94,35 @@ lark-cli slides +replace-slide --as user --presentation TARGET_ID \
   --slide-id SLIDE_ID --parts @parts.json
 ```
 
-`parts.json` 中的替换项使用 `action: block_replace`、`block_id`、`replacement`；新增项使用 `action: block_insert`、`insertion`。坐标变化也需要提供完整的目标块 XML，不存在可假定的字段级 patch。用 JSON 文件保存 XML，避免 shell 转义损坏文本。
+In `parts.json`, replacements use `action: block_replace`, `block_id`, and `replacement`; insertions use `action: block_insert` and `insertion`. Coordinate changes still require the complete target block XML. Do not assume a field-level patch exists. Store XML in JSON files to avoid shell-escaping damage.
 
-飞书原生文字的居中可用如下结构表达；尺寸、字号、字体须来自当前稿件：
+The following structure expresses vertical centering for native Feishu text. Obtain dimensions, font sizes, and fonts from the current presentation:
 
 ```xml
 <shape type="text" topLeftX="80" topLeftY="490" width="820" height="34">
   <content fontSize="12" verticalAlign="middle" paddingTop="0" paddingBottom="0"
     textAlign="left" color="rgba(255,255,255,1)" lineSpacing="multiple:1.1">
-    <p>保留原稿提示文字</p>
+    <p>Preserve the original callout text</p>
   </content>
 </shape>
 ```
 
-矩形背景不是容器，图标与文字应和背景平级叠放。自定义路径使用形状局部坐标。原生素材图片按工具要求上传并使用媒体 token，不能假定外链可直接显示。完整页面提交前运行目标技能提供的 XML 校验。
+A rectangular background is not a container; place icons and text alongside it in the same layer hierarchy. Use shape-local coordinates for custom paths. Upload image assets as required by the tool and use media tokens; do not assume external image URLs will render directly. Run the destination skill's XML validation before submitting complete pages.
 
-写入失败或批量操作中断时先回读，确认哪些页或元素已成功，再恢复剩余部分；不能盲目重放插入造成重复。服务端可能省略默认属性，例如回读没有 `verticalAlign` 时，要结合当前 schema 的默认值和实际渲染判断，不能直接视为居中失效。
+After a failed write or interrupted batch, read back the destination to determine which pages or elements succeeded, then resume the remaining work. Do not blindly replay insertions and create duplicates. The server may omit default attributes. For example, if readback omits `verticalAlign`, consider the current schema's defaults and actual rendering before concluding that centering failed.
 
-### 本地 PPTX
+### Local PPTX
 
-使用当前可用的演示文稿生成能力，写入原生文本框、形状、自由路径和组合。将 SVG 作为图片嵌入只保留外观，不能满足逐组件编辑要求。保存后重新打开或渲染 PPTX，检查字体、路径孔洞、层叠和文本换行；如还需导入飞书，再检查导入后的结果，不能用本地渲染替代在线验证。
+Use the available presentation-generation capabilities to write native text boxes, shapes, freeform paths, and groups. Embedding an SVG as an image preserves appearance but does not satisfy component-level editability. Reopen or render the saved PPTX and inspect fonts, path holes, layering, and text wrapping. If importing into Feishu, inspect the imported result as well; local rendering does not replace online verification.
 
-## 验证与交付
+## Verify and Deliver
 
-同时进行结构检查和视觉检查，两者不能互相替代。
+Perform both structural and visual checks. Neither replaces the other.
 
-- **内容与页序**：逐页核对原文、数字、标签和顺序；标明用户要求的增删页，确认插入页面位置。没有丢失内容、重复页面或加入隐藏条目。
-- **对象可编辑性**：检查文字、路径、图标仍是原生对象；实际选择或检查文件对象结构。图片总数不能单独证明可编辑性，应核对每张图的用途。
-- **几何**：无越界、意外遮挡或裁切；所有提示区块的背景、文字框和图标中心一致，左右间距合理；多行内容无截断。
-- **视觉**：在一致比例下逐页比较原稿和输出。尤其检查复杂图形关系、图标孔洞、渐变、照片裁切和字体换行。可以生成检查用截图或 PDF，但不将它们嵌入交付稿冒充编辑对象。
-- **修改保护**：局部修复后回读最新结果，确认页序、正文和未修改页面保持原样。比较文本时按页/块核对语义内容，考虑服务端规范化及无文字形状自动添加的空 content。
+- **Content and page order**: Check original text, numbers, labels, and order on every page. Identify user-requested additions or removals and confirm insertion positions. Ensure no content is lost, no pages are duplicated, and no hidden entries are added.
+- **Object editability**: Verify text, paths, and icons remain native objects by selecting them or inspecting the file's object structure. Image counts alone do not prove editability; check each image's purpose.
+- **Geometry**: Check for out-of-bounds objects, unintended overlap, and cropping. Ensure callout backgrounds, text boxes, and icons share the intended centerline, horizontal spacing is reasonable, and multiline text is not truncated.
+- **Visual fidelity**: Compare source and output page by page at a consistent scale. Pay particular attention to complex diagram relationships, icon holes, gradients, photo cropping, and font wrapping. Screenshots or PDFs may support inspection, but must not be embedded in the deliverable as substitutes for editable objects.
+- **Preservation during edits**: Read back the latest result after local repairs and confirm page order, body text, and untouched pages remain intact. Compare text semantically by page/block, accounting for server normalization and empty content automatically added to shapes without text.
 
-记录已检查页面、发现差异和修复状态。修复后重新检查受影响页面即可；不因工具调用成功就宣称全稿一致，也不必在局部修改后重复所有昂贵步骤。交付可打开的文件或在线链接，并准确说明已验证的可编辑性和仍存在的具体限制。
+Record the pages checked, differences found, and repair status. Recheck affected pages after repairs. Do not claim full fidelity merely because a tool call succeeded, or repeat every expensive step after a local change. Deliver an accessible file or online link and accurately describe verified editability and any specific remaining limitations.
