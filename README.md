@@ -10,6 +10,7 @@ Skills for AI agents. See `AGENTS.md` for contributor guidelines.
 - deploy-tidb-aws - deploy or manage TiDB clusters on AWS with Terraform and TiUP
 - gamma-to-ppt - recreate Gamma webpages as editable PPTX or Feishu slides, preserving layouts, vector diagrams, icons, and alignment
 - implement-issue - implement a GitHub issue from an issue URL or number
+- gitea-tea - manage Gitea resources with tea for requests explicitly mentioning Gitea or the tea CLI
 - mysql-to-tidb-ddl-check - assess exported MySQL DDL for TiDB 8.5 and TiDB Cloud using minimum capabilities across providers and regions by default (neither provider nor region required), with English, Chinese, or Japanese reports containing located findings, coverage gaps, and remediation advice
 - new-issue - create or file a GitHub issue, bug report, or feature request from the conversation context
 - natural-writing - polish Chinese and English articles to sound less templated while preserving the author's voice and meaning
@@ -82,6 +83,21 @@ source and report any remaining differences with the presentation link.
 
 You can request a local PPTX instead, repair an existing conversion, or
 insert specified pages from another presentation at a chosen position.
+
+### gitea-tea
+
+[Skill instructions](gitea-tea/SKILL.md)
+
+```text
+Use $gitea-tea to inspect a PR on my Gitea instance:
+https://git.example.com/owner/repo/pulls/17.
+Select the matching tea login, summarize the PR changes and available CI
+results, and report any failed checks. Do not post a review or merge it.
+```
+
+Replace the example host with your Gitea instance. This skill applies to explicit Gitea or tea CLI requests, including URLs identified as Gitea; generic GitHub, Git, or registry requests do not activate it.
+
+The skill adapts commands and flags using the installed tea help instead of requiring a fixed version, and reports capability gaps when no equivalent operation is available.
 
 ### implement-issue
 
